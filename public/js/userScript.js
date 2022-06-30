@@ -70,7 +70,10 @@ let qtyNumDiv = document.querySelectorAll('.qty-num');
 let updateCart = document.getElementById('shopping-cart-close-btn');
 let cartItems = document.querySelectorAll('.cart-item');
 let shoppingCart = document.getElementById('shopping-cart');
-
+let allReviewsHigh = document.getElementById('all-reviews-high');
+let allReviewsLow = document.getElementById('all-reviews-low');
+let filterHighBtn = document.getElementById('high');
+let filterLowBtn = document.getElementById('low');
 
 let getEvent = (event) => {
     console.log(event.path)
@@ -136,3 +139,24 @@ if (shoppingCartBtn) {
         }
     })
 };
+
+if (filterHighBtn) {
+    filterHighBtn.addEventListener('click', (event) => {
+        if (allReviewsHigh.hidden === true) {
+            allReviewsHigh.hidden = false;
+            allReviewsLow.hidden  = true
+        } else {
+            allReviewsHigh.hidden = true
+            allReviewsLow.hidden = false
+        }
+    });
+    filterLowBtn.addEventListener('click', (event) => {
+        if (allReviewsLow.hidden === true) {
+            allReviewsLow.hidden = false;
+            allReviewsHigh.hidden = true;
+        } else {
+            allReviewsLow.hidden = true;
+            allReviewsHigh.hidden = false
+        }
+    })
+}

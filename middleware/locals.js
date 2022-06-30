@@ -24,7 +24,6 @@ module.exports.locals = async (req, res, next) => {
         });
     } else { res.locals.cart = [] };
     res.locals.allNotifs = currentUser.notifications;
-    console.log(currentUser.topCategory);
     next();
 }
 

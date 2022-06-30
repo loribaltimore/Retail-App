@@ -1,7 +1,8 @@
 let Item = require('../models/itemModel');
 let User = require('../models/userModel');
 let Review = require('../models/reviewModel');
-let { ShoppingCartItem, newNotification } = require('../middleware/functions');
+let { ShoppingCartItem, newNotification, filter } = require('../middleware/functions');
+
 module.exports.renderCategory = async (req, res, next) => {
     let itemCategory = req.originalUrl.split('/')[3];
     let allItems = await Item.find({ 'category.main': itemCategory });
@@ -15,9 +16,22 @@ module.exports.renderCategory = async (req, res, next) => {
 module.exports.renderItem = async (req, res, next) => {
     let { itemId } = req.params;
     let currentItem = await Item.findById(itemId);
-    let allReviews = await currentItem.populate({ path: 'reviews.all_reviews' })
-        .then(data => { return data.reviews.all_reviews}).catch(err => console.log(err));
-res.render('itemPage', {currentItem, allReviews})
+          let allReviews = await currentItem.populate({ path: 'reviews.all_reviews' })
+              .then(data => {
+                  return data.reviews.all_reviews
+              }).catch(err => console.log(err));
+    let allReviewsLow = allReviews.sort(function (a, b) {
+        return a.rating - b.rating
+    });
+    let allReviewsHigh = allReviews.sort(function (a, b) {
+        return b.rating - a.rating
+    });
+    console.log(allReviewsLow)
+    console.log(allReviewsHigh)
+//     console.log(allReviews)
+//     console.log(allReviewsHigh);
+// console.log(allReviewsLow)
+        return res.render('itemPage', {currentItem, allReviewsHigh, allReviewsLow})
 }
 
 module.exports.itemEngagement = async (req, res, next) => {
@@ -75,6 +89,12 @@ module.exports.itemEngagement = async (req, res, next) => {
 res.redirect(res.locals.currentUrl)
 }
 
+
+///WHY IN GODS NAME ARE THE REVIEWS NOT SORTING
+///FINISH THE REVIEWS THIS FEELS LIKE A GIANT WASTE OF TIME AND IS IRRITATING
+///BUT YOU HAD A SOLUTION A LONG TIME AGO AND WANTED TO TRY TO FIGURE OUT SOMETHING MORE 
+///ELOQUENT. THATS HOW YOU LEARN. GROWTH IS HARD. IF YOU JUST DID YOUR FIRST IDEA YOU WOULDNT HAVE BEEN
+///ACTIVELY ENGAGED IN FIGURING OUT NEW SOLUTIONS 
 
 
 

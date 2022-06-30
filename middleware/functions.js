@@ -1,3 +1,5 @@
+let Item = require('../models/itemModel');
+
 class ShoppingCartItem{
     constructor(item, qty, sort) {
         this.item = item;
@@ -68,4 +70,19 @@ const notifyPriceChange = async (currentItem, currentUser) => {
     });
 };
 
-module.exports = { ShoppingCartItem, notifyPriceChange, Notification, newNotification };
+// const filter = async (req, res, next) => {
+//     let { itemId } = req.params;
+//     let { filter } = req.body;
+//     let currentItem = await Item.findById(itemId);
+//     let allReviews = await currentItem.populate({ path: 'reviews.all_reviews' })
+//         .then(data => {
+//             return data.reviews.all_reviews.sort(function (a, b) {
+//                 if (filter === 'high' || req.originalMethod === 'GET') {
+//                     return a.rating - b.rating  
+//                     } else {return b.rating - a.rating}
+//                 });
+//         }).catch(err => console.log(err));
+//     return allReviews
+// }
+
+module.exports = { ShoppingCartItem, notifyPriceChange, Notification, newNotification};

@@ -12,12 +12,33 @@
     </div>
     </div>
     <div id="customer-eng">
-        <div class="container">
-            <h1 class="display-6">Reviews</h1>
-            <p id="item-page-avg-rating">Avg. Rating: <%=currentItem.reviews.avg%></p>
+        <div class="row container">
+            <div class="col">
+                <h1 class="display-6">Reviews</h1>
+                <p id="item-page-avg-rating">Avg. Rating: <%=currentItem.averageRating%></p>
+            </div>
+            <div class="row col filter-btns">
+                <h6>Filter</h6>
+                    <button id="low" class="filter-btn col" type="submit">Low/High</button>
+                    <button id="high" class="filter-btn col" type="submit">High/Low</button>
+            </div>
         </div>
-        <div class="container row" id="all-reviews">
-            <%for (let review of allReviews){%>
+        
+        <div class="container row" id="all-reviews-high">
+            <%for (let review of allReviewsHigh){%>
+            <div class="row">
+                <h5 class="review-author-name"><%=review.author.name%></h5>
+                <div class="row">
+                <%for (let i = 0; i < review.rating; i++){%>
+                   <span class="col star">&starf;</span> 
+               <%}%>
+            </div>
+                <p class="review-body"><%=review.body%></p>
+            </div>
+            <%}%>
+        </div>
+        <div class="container row" id="all-reviews-low">
+            <%for (let review of allReviewsLow){%>
             <div class="row">
                 <h5 class="review-author-name"><%=review.author.name%></h5>
                 <div class="row">

@@ -23,12 +23,12 @@ let interest_engagement = async (req, res, next) => {
             let currentItem = await Item.findById(currentItemId);
             let endTime = Date.now();
             let totalTime = endTime - req.session.startTime;
-            if ((totalTime / 1000) > 5) {
+            if ((totalTime / 1000) > 54) {
                 console.log(`current items total interest changed from ${currentItem.user_engagement.total_interest}`)
-                currentItem.user_engagement.total_interest += Math.floor((totalTime / 1000) / 5);
+                currentItem.user_engagement.total_interest += Math.floor((totalTime / 1000) / 54);
                 console.log(`to ${currentItem.user_engagement.total_interest}`);
                 console.log(`current users interest in ${currentItem.category.main} from ${currentUser.history.interest_by_category[currentItem.category.main]}`);
-                currentUser.history.interest_by_category[currentItem.category.main] += Math.floor((totalTime / 1000) / 5);
+                currentUser.history.interest_by_category[currentItem.category.main] += Math.floor((totalTime / 1000) / 54);
                 console.log(`to ${currentUser.history.interest_by_category[currentItem.category.main]}`)
                 await currentItem.save();
                 await currentUser.save();

@@ -68,7 +68,6 @@ let seedReviews = async (req, res, next) => {
     let allUsers = await User.find({});
     let allItems = await Item.find({});
         ///delete all Reviews
-    await Review.deleteMany({});
     ///change all item reviews to 0 / 0
     allItems.forEach(async (element, index) => {
         element.reviews = { qty: 0, total_rating: 0, all_reviews: [] }
@@ -76,7 +75,6 @@ let seedReviews = async (req, res, next) => {
     });
     ///for each User...
     allUsers.forEach(async (element, index) => {
-        element.reviews = [];
         ////select a random item...
        let randomItem = allItems[Math.floor(Math.random() * allItems.length)];
         ////create a review...
@@ -105,8 +103,10 @@ let seedReviews = async (req, res, next) => {
         
     });
 };
-
+for (let i = 0; i < 10; i++){
 seedReviews();
+
+}
 
 let seedClothing = async (req, res, next) => {
     // await Item.deleteMany({});
