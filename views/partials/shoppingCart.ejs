@@ -1,0 +1,26 @@
+<script>
+   let currentUserId = '<%=currentUser.id%>';
+   let currentItemId = '<%=currentItem.id%>'
+   let itemCategory = '<%=currentItem.category.main%>';
+</script>
+<div class="container row" id="shopping-cart" hidden>
+   <% for (let item of cart){%>
+    <div class="container row cart-item ">
+            <div class="col">
+        <h6 class="cart-name"><%=item.name%></h6>
+        <img src="<%=item.img%>" alt="" class="shopping-cart-img">
+        <h6 class="cart-price">$<%=item.price%></h6>
+            </div>
+        <div class="col row text-center qty-div">
+            <h6 class="">Qty</h6>
+            <div class="row qty-num">
+                <h5 class="qty col qty-subtract-btn">-</h5>
+            <p class="qty col qty-total"><%=item.qty%></p>
+            <h5 class="qty col qty-add-btn">+</h5>
+                </div>
+        </div>
+    </div>
+        
+    <%}%>
+        <button type="submit" class="btn-close" aria-label="Close" id="shopping-cart-close-btn"></button>
+</div>

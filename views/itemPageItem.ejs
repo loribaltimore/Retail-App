@@ -1,0 +1,34 @@
+
+<div class=" container row " >
+    <div class="col">
+    <div class="row col" id="item-div">
+        <div class="row">
+    <h1 class="display-3 col"><%=currentItem.name%></h1>
+        <h1 class="display-6 col" id="item-page-price">$<%=currentItem.price%></h1>
+        </div>
+    <div class="row ">
+    <img src="<%=currentItem.img[0].path%>" id="item-page-img" alt="">
+    <p id="item-page-desc"><%=currentItem.description%></p>
+    </div>
+    </div>
+    <div id="customer-eng">
+        <div class="container">
+            <h1 class="display-6">Reviews</h1>
+            <p id="item-page-avg-rating">Avg. Rating: <%=currentItem.reviews.avg%></p>
+        </div>
+        <div class="container row" id="all-reviews">
+            <%for (let review of allReviews){%>
+            <div class="row">
+                <h5 class="review-author-name"><%=review.author.name%></h5>
+                <div class="row">
+                <%for (let i = 0; i < review.rating; i++){%>
+                   <span class="col star">&starf;</span> 
+               <%}%>
+            </div>
+                <p class="review-body"><%=review.body%></p>
+            </div>
+            <%}%>
+        </div>
+    </div>
+    </div>
+    <%-include('./partials/shoppingCart')%>

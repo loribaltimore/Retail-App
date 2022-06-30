@@ -1,0 +1,49 @@
+<%-layout('./partials/boilerplate')%>
+<div class="container row">
+<div class="col">
+<form action="http://localhost:3001/user/item/create" method="POST" enctype="multipart/form-data" class="mt-5">
+    <div class="row create-input-div">
+<input type="text" name="name" placeholder="Name" class="mt-2 create-item-input">
+<input type="text" name="price" placeholder="Price" class="mt-2 create-item-input">
+<input type="text" name="description" placeholder="Item Description" class="mt-2 create-item-input">
+<input type="file" name="img" class="mt-2 create-item-input" multiple>
+</div>
+<div class="mt-3">
+    <h5>Main Category</h5>
+    Clothing
+    <input type="radio" name="cat[main]" value="clothing">
+    Grocery
+    <input type="radio" name="cat[main]" value="grocery">
+    Home
+    <input type="radio" name="cat[main]" value="home">
+    Electronics
+    <input type="radio" name="cat[main]" value="electronics">
+    DIY
+    <input type="radio" name="cat[main]" value="DIY">
+    Toys
+    <input type="radio" name="cat[main]" value="toys">
+</div>
+<div class="mt-3">
+<h5>Sub-Category</h5>
+Men
+<input type="checkbox" name="cat[sub][]" value="masc">
+Women
+<input type="checkbox" name="cat[sub][]" value="fem">
+Novelty
+<input type="checkbox" name="cat[sub][]" value="novelty">
+Vintage
+<input type="checkbox" name="cat[sub][]" value="vintage">
+Old
+<input type="checkbox" name="cat[sub][]" value="old">
+New
+<input type="checkbox" name="cat[sub][]" value="new">
+Classic
+<input type="checkbox" name=cat[sub][]" value="classic">
+Modern
+<input type="checkbox" name="cat[sub][]" value="modern">
+</div>
+<button type="submit">Create Item</button>
+</form>
+</div>
+<%-include('./partials/itemUserPanel')%>
+</div>

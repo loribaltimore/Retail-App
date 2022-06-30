@@ -1,0 +1,16 @@
+
+<div id="delete-item-popup" hidden>
+    <div class="container row text-center" id="delete-item-div">
+        <div id="delete-message">       
+             <h6>Are you sure you want to delete <%=currentItem.name%></h6>
+        </div>
+        <div class="col">
+            <form action="http://localhost:3001/user/item/<%=currentItem.id%>?_method=DELETE" method="POST">
+            <button type="submit" class="btn btn-danger">DELETE ITEM</button>
+            </form>
+        </div>
+        <div class="col">        
+            <button class="btn btn-primary" id="keep-item">KEEP ITEM</button>
+        </div>
+    </div>
+</div>

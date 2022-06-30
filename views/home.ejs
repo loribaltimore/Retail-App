@@ -1,0 +1,15 @@
+<%-layout('./partials/boilerplate.ejs')%>
+<div class="container row" id="panel-div">
+    <div class="col border panel" id="categories-panel">
+        <div class="row">
+            <a href="/shop/<%=currentUser.id%>/clothing">Clothing</a>
+            <a href="/shop/<%=currentUser.id%>/grocery">Grocery</a>
+            <a href="/shop/<%=currentUser.id%>/home">Home</a>
+            <a href="/shop/<%=currentUser.id%>/electronics">Electronics</a>
+            <a href="/shop/<%=currentUser.id%>/DIY">DIY</a>
+            <a href="/shop/<%=currentUser.id%>/toys">Toys</a>
+        </div>
+    </div>
+    <div class="col border panel" id="featured-panel">asdasd</div>
+    <%-include('./partials/itemUserPanel')%>
+</div>

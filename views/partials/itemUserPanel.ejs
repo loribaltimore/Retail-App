@@ -1,0 +1,53 @@
+<%if (!/shop/.test(currentUrl)) {%>
+    <div class="col text-center" id="item-user-panel">
+        <div>
+            <h5 id="notif-btn" class="eng-btn like">Notifications</h5>
+           <%if (allNotifs.length){%>
+            <span id="notif-count" class="position-absolute  badge rounded-pill bg-danger"><%=allNotifs.length%></span>
+           <%}%>
+            </div>
+        <%if (!/home/.test(currentUrl)){%>
+        <a href="/user/<%=currentUser.id%>/item/create"><h5 class="mt-3">Create Listing</h5></a>
+        <%if (!/myItems/.test(currentUrl)) {%>
+            <h5 class="mt-3 listing-btn" id="update-listing-btn"" >Update Listing</h5>
+            <h5 class="mt-3 listing-btn" id="delete-listing-btn">Delete Listing</h5>    
+            <%}%>
+        <%} else {%>
+            <a href="/user/<%=currentUser.id%>/item/create"><h5 class="mt-3">Create Listing</h5></a>
+            <a href="/user/<%=currentUser.id%>/item/myItems"><h5 class="mt-3">My Listings</h5></a>
+            <h5 class="mt-3 listing-btn" id="delete-listing-btn">Delete Listing</h5>
+            <%}%>
+    </div>
+<%} else {%>
+    <div class="col text-center" id="item-user-panel">
+        <div>
+            <h5 id="notif-btn" class="eng-btn notif">Notifications</h5>
+            <%if (allNotifs.length){%>
+                <span id="notif-count" class="position-absolute  badge rounded-pill bg-danger"><%=allNotifs.length%></span>
+               <%}%>
+        </div>
+        <div id="shopping-cart-div">
+            <h5 id="shopping-cart-btn">Shopping Cart</h5>
+        </div>
+    <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>" 
+        method="POST" id="eng-form">
+    <div>
+        <h5 id="add-btn" class="eng-btn add">Add to Cart</h5>
+       <% if (cart.map(x => x.name).indexOf(currentItem.name) === -1){%>
+        <input type="radio" name="action" value="add" id="add-input " class="eng-input" hidden>
+        <%} else {%>
+            <input type="radio" name="action" value="update-cart" id="add-input " class="eng-input" hidden>
+            <input type="text" name="cartItems" value="<%=currentItem.name%>::1" hidden>
+            <%}%>
+    </div>
+    <div>
+        <h5 id="watch-btn" class="eng-btn watch">Watch Item</h5>
+        <input type="radio" name="action" value="watch" id="watch-input" class="eng-input" hidden>
+    </div>
+    <div>
+        <h5 id="like-btn" class="eng-btn like">Like Item</h5>
+        <input type="radio" name="action" value="like" id="like-input" class="eng-input" hidden>
+    </div>
+    </form>
+    <%}%>
+    </div>

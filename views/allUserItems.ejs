@@ -1,0 +1,24 @@
+<%-layout('./partials/boilerplate')%>
+<div class="container row">
+
+<div class="col">
+<%allItems.forEach(function (element, index) {%>
+    <div class="container row all-items-div mt-2">
+        <div class="row mt-4">
+           <a href="/user/<%=currentUser.id%>/item/<%=element.id%>"><div class="col">
+                <h5><%=element.name%></h5>
+            </div>
+            <div class="col">
+                <h6><%=element.price%></h6>
+            </div>
+        </a> 
+        </div>
+<img src="<%=element.img[0].path%>" class="all-items-img"   alt="">
+<p><%=element.description%></p>
+    </div>
+<%})%>
+</div>
+
+<%-include('./partials/itemUserPanel')%>
+
+</div>

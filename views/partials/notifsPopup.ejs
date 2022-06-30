@@ -1,0 +1,19 @@
+<script>
+    let currentUserId = '<%=currentUser.id%>'
+</script>
+<div class="container row" id="notifs"hidden>
+    <% for (let notif of allNotifs){%>
+       <% if (notif.category !== 'profile'){%>
+            <a href="/shop/<%=currentUser.id%>/<%=notif.item.item_category%>/<%=notif.item.item_id.toString()%>">
+                <div class="container row " >
+                    <div class="col notification" id="<%=notif.id%>">
+                <h6 class="notif-message"><%=notif.message%></h6>
+                <img src="<%=notif.item.item_img%>" alt="" class="shopping-cart-img">
+                <h6 class="cart-price">$<%=notif.item.item_price%></h6>
+                    </div>
+            </div>
+           </a> 
+       <%}%>
+     <%}%>
+         <button type="submit" class="btn-close" aria-label="Close" id="notif-popup-close"></button>
+ </div>

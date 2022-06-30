@@ -1,0 +1,230 @@
+a{
+    color: black;
+    text-decoration: none;
+}
+#panel-div{
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left:3.5rem
+}
+#categories-panel{
+    margin: 0;
+    padding: 0;
+    height: 100rem;
+    max-width: 15rem;
+}
+#user-panel{
+    margin: 0;
+    padding: 0;
+    height: 100rem;
+    max-width: 15rem;
+    background-color: lightsteelblue;
+}
+
+/* category Page */
+
+.all-items-img{
+    max-width: 30rem;
+
+}
+#top-item{
+    max-width: 10rem;
+}
+#whats-hot{
+    position: relative;
+    left: 9rem;
+    top: 3rem
+}
+
+/* Item Page */
+#item-page-img{
+    max-width: 45rem;
+}
+#item-div{
+    position: relative;
+    top: 1rem;
+}
+#item-page-price{
+    position: relative;
+    right: 5rem
+}
+#back-btn{
+    position: relative;
+    left: 2rem;
+}
+#item-page-desc{
+    font-size: 20px;
+    font-weight: light;
+}
+#customer-eng{
+    margin-top: 2rem;
+    height: 25rem;
+    width: 100%;
+position: absolute;
+    background-color:lightgoldenrodyellow;
+    z-index: 0;
+}
+#item-page-avg-rating{
+font-size: x-large;
+}
+#item-user-panel{
+    margin: 0;
+    padding: 0;
+    height: 100rem;
+    max-width: 15rem;
+    background-color: lightsteelblue;
+    position: relative;
+    left: 3rem;
+    z-index: 1;
+}
+/* Create Item Page */
+
+/* #create-input-div{
+    /* max-width: 30rem;
+    height: 30rem; */
+
+/* } */ 
+
+.create-item-input{
+    max-width: 15rem;
+}
+#delete-item-popup{
+    position: absolute;
+    top: 20rem;
+    left: 20rem;
+    max-width: 30rem;
+    height: 10rem;
+    background: yellow;
+}
+#delete-message{
+    margin-bottom: 2rem;
+}
+#delete-item-div{
+    position: relative;
+    top: 2rem;
+    left: 1.5rem
+}
+
+/* All Items Page */
+.all-items-div{
+    max-width: 50rem;
+    height: 20rem;
+    background-color: yellow;
+
+}
+.all-items-img{
+    max-width: 15rem;
+    height: 10rem;
+}
+
+/* Update Item Popup */
+#update-popup-div{
+    position: absolute;
+    background-color: wheat;
+    max-height: 30rem;
+}
+#update-form{
+    margin: 0%
+}
+.listing-btn{
+    cursor: pointer;
+}
+.update-popup-img{
+    max-width: 10rem;
+    max-height: 10rem;
+}
+.update-img{
+    max-width: 12rem;
+}
+
+/* Shopping */
+.eng-btn{
+    cursor: pointer;
+}
+#shopping-cart-btn{
+    cursor: pointer;
+}
+.cart-item{
+    max-width: inherit;
+    max-height: 5rem;
+border-style: solid;
+border-width: 1px;
+}
+#shopping-cart{
+    position: absolute;
+    width: 20rem;
+    background-color: lightgoldenrodyellow;
+    padding: 1%;
+    border-style: solid;
+    left: 47rem
+}
+.shopping-cart-img{
+    max-width: 5.5rem;
+}
+.cart-name{
+font-size: 12px;
+margin-bottom: 1%;
+}
+.cart-price{
+    font-size: 12px;
+}
+.qty-div{
+    margin-bottom: 0%;
+   max-height: 3rem;
+   max-width: 10rem;
+   
+}
+.qty{
+    max-width: 1rem;
+}
+.qty-num{
+    position: relative;
+   left: 1.25rem;
+}
+.qty-add-btn{
+    cursor: pointer;
+}
+.qty-subtract-btn{
+    cursor: pointer
+}
+#shopping-cart-close-btn{
+    position: absolute;
+    left: 18rem;
+    top: .1rem
+}
+/* notifications */
+#notifs{
+    background-color: lightgoldenrodyellow;
+    position: absolute;
+    width: 20rem;
+    background-color: lightgoldenrodyellow;
+    padding: 1%;
+    border-style: solid;
+    left: 47rem;
+    z-index: 2;
+}
+#notif-count{
+    top: 0%;
+  left: 75%
+}
+.notification{
+    max-width: inherit;
+    max-height: 8rem;
+border-style: solid;
+border-width: 1px;
+}
+#notif-popup-close{
+    position: absolute;
+    left: 18rem;
+    top: .1rem
+}
+
+/* Reviews */
+.star{
+    max-width: 1.75rem;
+}
+.review-body{
+    max-width: 50rem;
+}
+

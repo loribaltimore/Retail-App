@@ -1,0 +1,40 @@
+<%-layout('./partials/boilerplate.ejs')%>
+
+<div class="container row" id="panel-div">
+    <div class="col border side-panel" id="categories-panel">
+        <div class="row">
+            <a href="/shop/<%=currentUser.id%>/clothing">Clothing</a>
+            <a href="/shop/<%=currentUser.id%>/grocery">Grocery</a>
+            <a href="/shop/<%=currentUser.id%>/home">Home</a>
+            <a href="/shop/<%=currentUser.id%>/electronics">Electronics</a>
+            <a href="/shop/<%=currentUser.id%>/DIY">DIY</a>
+            <a href="/shop/<%=currentUser.id%>/toys">Toys</a>
+        </div>
+    </div>
+
+
+    <div class="col border panel" id="featured-panel">
+      <%-include('./partials/featured')%>
+      <%allItems.forEach(function (element, index) {%>
+        <div class="container row all-items-div mt-2">
+            <div class="row mt-4">
+               <a href="/shop/<%=currentUser.id%>/<%=element.category.main%>/<%=element.id%>"><div class="col">
+                    <h5><%=element.name%></h5>
+                </div>
+                <div class="col">
+                    <h6><%=element.price%></h6>
+                </div>
+            </a> 
+            </div>
+    <img src="<%=element.img[0].path%>" class="all-items-img"   alt="">
+    <p><%=element.description%></p>
+        </div>
+    <%})%>
+    </div>
+
+
+
+    <div class="col border side-panel" id="user-panel">
+        ass balls and weiners
+    </div>
+</div>
