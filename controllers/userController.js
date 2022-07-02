@@ -74,7 +74,7 @@ module.exports.updateItem = async (req, res, next) => {
 }
 
 //continue with review capabilities. Filter by highest and lowest;
-
+///remove from cart, unwatch, unlike
 ///possibly make 'notifypricechange' more general so it can give ANY notification pushed to it
 ///rather than just notify price change!
 ///recommended on home page based on categories, subcategories

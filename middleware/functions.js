@@ -1,4 +1,5 @@
 let Item = require('../models/itemModel');
+let Review = require('../models/reviewModel');
 
 class ShoppingCartItem{
     constructor(item, qty, sort) {
@@ -70,19 +71,72 @@ const notifyPriceChange = async (currentItem, currentUser) => {
     });
 };
 
-// const filter = async (req, res, next) => {
-//     let { itemId } = req.params;
-//     let { filter } = req.body;
-//     let currentItem = await Item.findById(itemId);
-//     let allReviews = await currentItem.populate({ path: 'reviews.all_reviews' })
-//         .then(data => {
-//             return data.reviews.all_reviews.sort(function (a, b) {
-//                 if (filter === 'high' || req.originalMethod === 'GET') {
-//                     return a.rating - b.rating  
-//                     } else {return b.rating - a.rating}
-//                 });
-//         }).catch(err => console.log(err));
-//     return allReviews
-// }
+let watchItem = async (req, currentUser, currentItem, itemId) => {
+    currentUser.history.watching.push(itemId);
+    currentItem.user_engagement.total_interest += 1;
+    currentItem.user_engagement.watched_by.push(currentUser.id);
+    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    req.flash('success', `Now watching ${currentItem.name}`)
+};
 
-module.exports = { ShoppingCartItem, notifyPriceChange, Notification, newNotification};
+let likeItem = async (req, currentUser, currentItem, itemId) => {
+    currentUser.history.liked.push(itemId);
+    currentItem.user_engagement.total_interest += 1;
+    currentItem.user_engagement.liked_by.push(currentUser.id);
+    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    req.flash('success', `You liked ${currentItem.name}`)
+};
+
+let addToCart = async (req, currentUser, currentItem) => {
+    let newCartItem = new ShoppingCartItem(currentItem, 1);
+    if (!req.session.cart) {
+        req.session.cart = [].concat(newCartItem);
+    } else {
+        req.session.cart.push(newCartItem);
+    }
+    currentItem.user_engagement.total_interest += 1
+    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    req.flash('success', 'Successfully added to cart')
+};
+
+let changeQty = async (req) => {
+    let { cartItems } = req.body;
+    req.session.cart.forEach(function (element, index) {
+        if (typeof cartItems !== 'string') {
+            let cartItemNames = cartItems.map(x => x.item);
+            if (cartItemNames.indexOf(element.item.name) >= 0) {
+                element.qty = parseInt(cartItems[cartItemNames.indexOf(element.item.name)].qty);
+            }
+        } else {
+            cartItems = cartItems.split('::');
+            if (cartItems[0] === element.item.name) {
+                element.qty = parseInt(element.qty) + 1;
+            }
+        }
+    });
+};
+
+let addReview = async (req, currentUser, currentItem) => {
+    let { review_body, rating } = req.body.review;
+    let newReview = await new Review({
+        item: currentItem._id,
+        author: {
+            name: currentUser.bio.name,
+            userId: currentUser._id
+        },
+        body: review_body,
+        rating: rating
+    }).save()
+        .then(data => { return data })
+        .catch(err => console.log(err));
+    currentUser.history.reviews.push(newReview._id);
+    currentItem.reviews.all_reviews.push(newReview._id);
+    currentItem.reviews.qty += 1;
+    currentItem.reviews.total_rating += parseInt(rating);
+};
+
+module.exports = {
+    ShoppingCartItem, notifyPriceChange, Notification,
+    newNotification, watchItem, likeItem,
+    addToCart, changeQty, addReview
+};

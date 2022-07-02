@@ -7,6 +7,9 @@ itemRouter.use(session, locals);
 
 itemRouter.route('/:itemId')
     .get(renderItem)
+
+
+
   
 
 module.exports = itemRouter;
