@@ -79,6 +79,12 @@ let watchItem = async (req, currentUser, currentItem, itemId) => {
     req.flash('success', `Now watching ${currentItem.name}`)
 };
 
+let unwatchItem = async (req, currentUser, currentItem) => {
+    currentUser.history.watching.pull(currentItem);
+    currentItem.user_engagement.watched_by.pull(currentUser._id);
+    req.flash('error', `Not watching ${currentItem.name} anymore`)
+};
+
 let likeItem = async (req, currentUser, currentItem, itemId) => {
     currentUser.history.liked.push(itemId);
     currentItem.user_engagement.total_interest += 1;
@@ -116,6 +122,47 @@ let changeQty = async (req) => {
     });
 };
 
+
+let userEngage = async (req, currentUser, currentItem, itemId) => {
+    let { action } = req.body.engage;
+    switch (action) {
+        case 'watch':
+            await watchItem(req, currentUser, currentItem, itemId);
+            break;
+        case 'like':
+            await likeItem(req, currentUser, currentItem, itemId);
+            break;
+        case 'add':
+            await addToCart(req, currentUser, currentItem);
+            break;
+        case 'update-cart':
+            await changeQty(req);
+            break;
+        case 'add-review':
+            await addReview(req, currentUser, currentItem);
+    };
+};
+
+let userDisengage = async (req, currentUser, currentItem, itemId) => {
+    let { action} = req.body.disengage;
+    switch (action) {
+        case 'watch':
+            await unwatchItem(req, currentUser, currentItem, itemId);
+            break;
+        case 'like':
+            await likeItem(req, currentUser, currentItem, itemId);
+            break;
+        case 'add':
+            await addToCart(req, currentUser, currentItem);
+            break;
+        case 'update-cart':
+            await changeQty(req);
+            break;
+        case 'add-review':
+            await addReview(req, currentUser, currentItem);
+    };
+}
+
 let addReview = async (req, currentUser, currentItem) => {
     let { review_body, rating } = req.body.review;
     let newReview = await new Review({
@@ -137,6 +184,5 @@ let addReview = async (req, currentUser, currentItem) => {
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
-    newNotification, watchItem, likeItem,
-    addToCart, changeQty, addReview
+    newNotification, userEngage, userDisengage, changeQty, addReview
 };

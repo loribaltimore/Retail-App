@@ -159,6 +159,19 @@ border-width: 1px;
     border-style: solid;
     left: 47rem
 }
+.cart-remove{
+    position: absolute;
+    z-index: 1;
+    top: 68%;
+    right: 2.4rem;
+    max-width: 4rem;
+    max-height: 1rem;
+    font-size: xx-small;
+}
+.cart-remove-text{
+    position: relative;
+    bottom: .3rem;
+}
 .shopping-cart-img{
     max-width: 5.5rem;
 }

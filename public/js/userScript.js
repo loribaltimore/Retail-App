@@ -122,7 +122,9 @@ if (updateCart) {
             method: 'post',
             url: `http://localhost:3001/shop/${currentUserId}/${itemCategory}/${currentItemId}`,
             data: {
-                action: 'update-cart',
+                engage: {
+                    action: 'update-cart'
+                },
                 cartItems: cartItemsObj
             },
         }).then(data => console.log(data)).catch(err => console.log(err))

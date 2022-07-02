@@ -18,7 +18,14 @@
             <p class="qty col qty-total"><%=item.qty%></p>
             <h5 class="qty col qty-add-btn">+</h5>
                 </div>
+             <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>?_method=PUT" method="POST">
+                
+                <input type="text" name="disengage[action]" value="">
+                <button class="btn btn-danger cart-remove"><span class="cart-remove-text">Remove</span></button>
+            </form>
+              
         </div>
+        
     </div>
         
     <%}%>

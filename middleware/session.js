@@ -49,6 +49,9 @@ let interest_engagement = async (req, res, next) => {
 };
 
 module.exports.session = async (req, res, next) => {
+    if (req.session.cart === undefined) {
+        req.session.cart = [];
+    } else {console.log(req.session.cart)};
     req.session.prevUrl = req.session.currentUrl;
     req.session.currentUrl = req.originalUrl;
     let interest = await interest_engagement(req)

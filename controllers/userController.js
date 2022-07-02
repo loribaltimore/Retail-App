@@ -72,15 +72,12 @@ module.exports.updateItem = async (req, res, next) => {
     req.flash('success', 'Successfully Updated Listing');
     res.redirect(`${currentItem.id}`)
 }
-
-//continue with review capabilities. Filter by highest and lowest;
+///finish userDisengage in functions/itemController
 ///remove from cart, unwatch, unlike
 ///possibly make 'notifypricechange' more general so it can give ANY notification pushed to it
 ///rather than just notify price change!
 ///recommended on home page based on categories, subcategories
 ////look up packages for processing totals or create it yourself by adding taxes by location visa address
-///create review portion
-///create Review Model
 ///expand on notifications by making sure other scenarios than just price change work
 ///notification popup needs to be finished. closing and deleting notification (enable currentItem save())
 
