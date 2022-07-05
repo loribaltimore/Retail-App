@@ -2,7 +2,7 @@ let Item = require('../models/itemModel');
 let User = require('../models/userModel');
 let Review = require('../models/reviewModel');
 let { ShoppingCartItem, newNotification, userEngage,
-    userDisengage, addReview, deleteReview } = require('../middleware/functions');
+    userDisengage, addReview, deleteReview, editReview } = require('../middleware/functions');
 
 module.exports.renderCategory = async (req, res, next) => {
     let itemCategory = req.originalUrl.split('/')[3];
@@ -27,10 +27,8 @@ module.exports.renderItem = async (req, res, next) => {
     let allReviewsHigh = allItemReviews.reviews.all_reviews.slice().sort(function (a, b) {
         return b.rating - a.rating
     });
-    console.log(allReviewsHigh)
     if (allItemReviews.reviews.all_reviews.map(x => x.author.userId.toString()).indexOf(currentUser.id) >= 0) {
-        console.log('sparky')
-        userReview = allReviewsHigh.filter(x => x.author.userId.toString() === currentUser.id)[0];
+        currentReview = allReviewsHigh.filter(x => x.author.userId.toString() === currentUser.id)[0];
     };
     return res.render('itemPage', { currentItem, allReviewsHigh, allReviewsLow, currentReview });
 }
@@ -51,10 +49,10 @@ module.exports.itemEngagement = async (req, res, next) => {
 
 module.exports.itemReview = async (req, res, next) => {
     let { userId, itemId } = req.params;
-    let { originalMethod } = req;
+    let { method } = req;
     let currentUser = await User.findById(userId);
     let currentItem = await Item.findById(itemId);
-    switch (originalMethod) {
+    switch (method) {
         case 'POST':
             await addReview(req, currentUser, currentItem);
             break;
@@ -67,6 +65,7 @@ module.exports.itemReview = async (req, res, next) => {
     };
     await currentUser.save();
     await currentItem.save();
+    res.redirect(`/shop/${currentUser.id}/${currentItem.category.main}/${currentItem.id}`);
 }
 
 ///finish with reviews. Want to display Users review on review page and give option to edit review.

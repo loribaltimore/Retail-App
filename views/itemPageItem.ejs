@@ -68,10 +68,11 @@
                 <p class="review-body"><%=currentReview.body%></p>
             </div>
             <div class="row">
-                <form action="http://localhost:3001/shop<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>/review/<%=currentReview%>">
+                <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>/review/<%=currentReview.id%>?_method=DELETE" method="POST">
                 <button class="col btn btn-danger review-btn"><span class="review-btn-text">Delete</span></button>
             </form>
-                <button class="col btn btn-primary review-btn"><span class="review-btn-text">Edit</span></button>
+            <%-include('./partials/reviewEditForm')%>
+                <button class="col btn btn-primary review-btn" id="edit-review-decoy"><span class="review-btn-text">Edit</span></button>
             </div>
         </div>
     <%}%>

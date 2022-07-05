@@ -187,22 +187,28 @@ let addReview = async (req, currentUser, currentItem) => {
 };
 let deleteReview = async (req, currentUser, currentItem) => {
     let { reviewId } = req.params;
-    let currentReview = await Review.findById(reviewId);
+    let currentReview = await Review.findByIdAndDelete(reviewId)
+        .then(data => { return data }).catch(err => console.log(err));
     currentUser.history.reviews.pull(currentReview._id);
     currentItem.reviews.all_reviews.pull(currentReview._id);
     currentItem.reviews.qty -= 1;
-    currentItem.reviews.total_rating -= parseInt(rating);
+    currentItem.reviews.total_rating -= parseInt(currentReview.rating);
+    req.flash('success', 'Successfully Deleted Review!');
 };
 
 let editReview = async (req, res, next) => {
     let { reviewId } = req.params;
-    let { body, rating } = req.body.review;
-    let currentReview = await Review.findByIdAndUpdate(reviewId, { body, rating });
-    
+    let { review_body, rating } = req.body.review;
+    console.log(review_body, rating);
+    let review = await Review.findById(reviewId);
+    console.log(review)
+    let currentReview = await Review.findByIdAndUpdate(reviewId, { body: review_body, rating: rating }, {new: true} )
+        .then(data => console.log(data)).catch(err => console.log(err));
+    req.flash('success', 'Review Successfully Updated!');
 }
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
-    addReview, deleteReview
+    addReview, deleteReview, editReview
 };

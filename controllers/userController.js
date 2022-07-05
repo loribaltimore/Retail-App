@@ -73,10 +73,10 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
-///finish review edit and delete. //Program form buttons in itemPageItem.
-///Different methods will result in different results from the switch in itemController/itemReview
-///verify that method cases are working and that the review functions work.
-///Then finish userDisengage && remove from cart, unwatch, unlike
+///Then finish userDisengage 
+///removefromCart is last one to troubleshoot;
+//start working on having totals calculated in cart
+///find tax rate and incorporate;
 
 
 

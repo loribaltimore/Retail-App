@@ -89,11 +89,6 @@ if (engagementForm) {
     shoppingCartBtn.addEventListener('click', (event) => {
         shoppingCartBtn.removeAttribute('hidden');
     });
-    // window.addEventListener('load', (event) => {
-    //     let startingLocation = event.delegateTarget.location.href;
-    //     let startTime = event.timeStamp;
-    //     window.addEventListener('')
-    // })
 }
 if (qtyNumDiv) {
     qtyNumDiv.forEach(function (element, index) {
@@ -160,5 +155,17 @@ if (filterHighBtn) {
             allReviewsLow.hidden = true;
             allReviewsHigh.hidden = false
         }
+    })
+}
+
+///REVIEW SCRIPT
+let editForm = document.getElementById('review-edit-form');
+let editDecoy = document.getElementById('edit-review-decoy');
+let editReviewBtn = document.getElementById('edit-review-btn');
+
+if (editDecoy) {
+    editDecoy.addEventListener('click', (event) => {
+        editDecoy.hidden = true;
+        editForm.hidden = false;
     })
 }
