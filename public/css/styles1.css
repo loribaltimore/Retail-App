@@ -244,8 +244,30 @@ border-width: 1px;
     max-width: 15rem;
     max-height: 2rem;
     position: relative;
-    top: 20%;
-    right: 60%;
     text-align: center;
+}
+.review-btn{
+    max-width: 5rem;
+    max-height: 1rem;
+}
+.review-btn-text{
+    position:relative;
+    bottom: .6rem
+}
+#user-review{
+    max-width: 30rem;
+    max-height: 15rem;
+    border-style: solid;
+    border-color: black;
+    position: absolute;
+    right: 35%;
+    top: 5%;
+    z-index: 2;
+}
+.all-reviews{
+    max-width: 30rem;
+}
+#review-header{
+    max-width: 12rem
 }
 

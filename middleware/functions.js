@@ -82,7 +82,7 @@ let watchItem = async (req, currentUser, currentItem, itemId) => {
 let unwatchItem = async (req, currentUser, currentItem) => {
     currentUser.history.watching.pull(currentItem);
     currentItem.user_engagement.watched_by.pull(currentUser._id);
-    req.flash('error', `Not watching ${currentItem.name} anymore`)
+    req.flash('info', `Not watching ${currentItem.name} anymore`)
 };
 
 let likeItem = async (req, currentUser, currentItem, itemId) => {
@@ -91,6 +91,11 @@ let likeItem = async (req, currentUser, currentItem, itemId) => {
     currentItem.user_engagement.liked_by.push(currentUser.id);
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
     req.flash('success', `You liked ${currentItem.name}`)
+};
+let unlikeItem = async (req, currentUser, currentItem, itemId) => {
+    currentUser.history.liked.pull(itemId);
+    currentItem.user_engagement.liked_by.pull(currentUser.id);
+    req.flash('info', `You un-liked ${currentItem.name}`)
 };
 
 let addToCart = async (req, currentUser, currentItem) => {
@@ -103,6 +108,10 @@ let addToCart = async (req, currentUser, currentItem) => {
     currentItem.user_engagement.total_interest += 1
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
     req.flash('success', 'Successfully added to cart')
+};
+let removeFromCart = async (req, currentUser, currentItem) => {
+    req.session.cart.pull(newCartItem);
+    req.flash('info', 'Successfully added to cart')
 };
 
 let changeQty = async (req) => {
@@ -133,13 +142,12 @@ let userEngage = async (req, currentUser, currentItem, itemId) => {
             await likeItem(req, currentUser, currentItem, itemId);
             break;
         case 'add':
-            await addToCart(req, currentUser, currentItem);
+            await removeFromCart(req, currentUser, currentItem);
             break;
         case 'update-cart':
             await changeQty(req);
             break;
-        case 'add-review':
-            await addReview(req, currentUser, currentItem);
+        
     };
 };
 
@@ -150,16 +158,12 @@ let userDisengage = async (req, currentUser, currentItem, itemId) => {
             await unwatchItem(req, currentUser, currentItem, itemId);
             break;
         case 'like':
-            await likeItem(req, currentUser, currentItem, itemId);
+            await unlikeItem(req, currentUser, currentItem, itemId);
             break;
         case 'add':
-            await addToCart(req, currentUser, currentItem);
+            await removeFromCart(req, currentUser, currentItem);
             break;
-        case 'update-cart':
-            await changeQty(req);
-            break;
-        case 'add-review':
-            await addReview(req, currentUser, currentItem);
+        
     };
 }
 
@@ -181,8 +185,24 @@ let addReview = async (req, currentUser, currentItem) => {
     currentItem.reviews.qty += 1;
     currentItem.reviews.total_rating += parseInt(rating);
 };
+let deleteReview = async (req, currentUser, currentItem) => {
+    let { reviewId } = req.params;
+    let currentReview = await Review.findById(reviewId);
+    currentUser.history.reviews.pull(currentReview._id);
+    currentItem.reviews.all_reviews.pull(currentReview._id);
+    currentItem.reviews.qty -= 1;
+    currentItem.reviews.total_rating -= parseInt(rating);
+};
+
+let editReview = async (req, res, next) => {
+    let { reviewId } = req.params;
+    let { body, rating } = req.body.review;
+    let currentReview = await Review.findByIdAndUpdate(reviewId, { body, rating });
+    
+}
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
-    newNotification, userEngage, userDisengage, changeQty, addReview
+    newNotification, userEngage, userDisengage,
+    addReview, deleteReview
 };

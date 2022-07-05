@@ -25,7 +25,8 @@ userRouter.route('/create')
 userRouter.route('/:itemId')
     .get(renderItem)
 .put(upload.array('img'), updateItem)
-.delete(deleteItem);
+    .delete(deleteItem);
+    
 
 
 

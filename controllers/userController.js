@@ -72,8 +72,15 @@ module.exports.updateItem = async (req, res, next) => {
     req.flash('success', 'Successfully Updated Listing');
     res.redirect(`${currentItem.id}`)
 }
-///finish userDisengage in functions/itemController
-///remove from cart, unwatch, unlike
+
+///finish review edit and delete. //Program form buttons in itemPageItem.
+///Different methods will result in different results from the switch in itemController/itemReview
+///verify that method cases are working and that the review functions work.
+///Then finish userDisengage && remove from cart, unwatch, unlike
+
+
+
+///reviews filter not working properly
 ///possibly make 'notifypricechange' more general so it can give ANY notification pushed to it
 ///rather than just notify price change!
 ///recommended on home page based on categories, subcategories

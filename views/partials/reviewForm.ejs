@@ -1,0 +1,9 @@
+<div class="container row">
+    <h5>Leave a Review</h5>
+    <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>" method="POST">
+    <input type="text" name="engage[action]" value="add-review" hidden>
+    <input type="text" placeholder="Tell use about the product.." name="review[review_body]">
+    <input type="range" min="1" max="5" name="review[rating]">
+    <button type="submit">Submit</button>
+    </form>
+</div>
