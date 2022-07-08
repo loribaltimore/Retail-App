@@ -77,7 +77,7 @@ let filterLowBtn = document.getElementById('low');
 
 let getEvent = (event) => {
     console.log(event.path)
-    let input = document.getElementById(event.path[0].nextElementSibling.id)
+    let input = document.getElementById(event.path[0].nextElementSibling.id);
     engagementForm.removeEventListener('click', getEvent);
     input.click();
     engagementForm.submit();

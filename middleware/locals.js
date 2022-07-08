@@ -20,7 +20,8 @@ module.exports.locals = async (req, res, next) => {
                 name: element.item.name,
                 price: element.item.price,
                 img: element.item.img[0].path,
-                qty: element.qty
+                qty: element.qty,
+                id: element.id
             }
         });
     } else { res.locals.cart = [] };

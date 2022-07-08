@@ -5,44 +5,19 @@ let Item = require('../itemModel');
 let User = require('../userModel');
 let Review = require('../reviewModel');
 let casual = require('casual');
+const { default: axios } = require('axios');
 mongoose.connect('mongodb://localhost:27017/amazon')
     .then(console.log('Database Ready for Seed'))
     .catch(err => console.log(err));
+let createClient = require('@mapbox/mapbox-sdk/services/geocoding');
+let mapboxClient = createClient({ accessToken: 'pk.eyJ1IjoibG9yaWJhMXRpbW9yZSIsImEiOiJja3ppbjA3Z3kwc2VrMnBxaGsxY3o0dnQ4In0.QzBP8BoDRGZetSuQiMVY7A'});
 
-// let seedItems = async(req, res, next) => {
-//     let newItem = new Item({
-//         name: 'Shower Head',
-//         category: {
-//             catId: mongoose.Types.ObjectId(),
-//             main: 'home',
-//             sub: ['fem', 'new', 'modern']
-//         },
-//         price: 29.99,
-//         img: [
-//             {
-//                 filename: 'user-photos/waxjanmzemsc7op4yfzp',
-//                 path: 'https://res.cloudinary.com/demgmfow6/image/upload/v1647578718/user-photos/waxjanmzemsc7op4yfzp.jpg',
-//             }
-//         ],
-//     }).save();
-//     console.log('Seed Items Done')
-// }
 
 let getInfo = async (req, res, next) => {
     let allItems = await Item.find({});
     let allUsers = await User.find({});
     console.log(allUsers.length);
-    // await Item.deleteMany({'reviews.all_reviews': []})
-    // console.log(allItems.filter(function (element, index) {
-    //     if (element.reviews.all_reviews.length === 0) {
-    //         return element
-    //     }
-    // }));
- 
-//   console.log(allUsers.history.interest_by_category)
-    // let allItems = await Item.find({});
-    // console.log(allItems);
-
+   
 }
 // getInfo();
 let seedUsers = async (req, res, next) => {
@@ -104,7 +79,7 @@ let seedReviews = async (req, res, next) => {
     });
 };
 for (let i = 0; i < 10; i++){
-seedReviews();
+// seedReviews();
 
 }
 
@@ -165,3 +140,15 @@ let addImg = async (req, res, next) => {
     console.log('Done adding images')
 };
 // addImg();
+
+let locationTest = async () => {
+    let address = '427 Bellevue Way SE';
+    let info = await mapboxClient.forwardGeocode({
+        query: address,
+        limit: 2
+    }).send()
+        .then(data => { return data }).catch(err => console.log(err));
+    console.log(info.body.features[0].geometry)
+};
+
+// locationTest();

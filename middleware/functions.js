@@ -1,16 +1,23 @@
 let Item = require('../models/itemModel');
 let Review = require('../models/reviewModel');
+let mongoose = require('mongoose');
+
+let removeItem = function (req) {
+    console.log(req.session.cart.length)
+    this.sort = 1;
+    req.session.cart.sort((a, b) => a - b).pop();
+    console.log(req.session.cart.length)
+}
 
 class ShoppingCartItem{
     constructor(item, qty, sort) {
         this.item = item;
         this.qty = qty;
         this.sort = 0;
+        this.id = mongoose.Types.ObjectId();
+        this.remove = removeItem;
     }
-    removeItem(req) {
-        this.sort = 1;
-        req.session.cart.sort((a, b) => a - b).pop();
-    }
+    
     changeQty(req, num) {
         this.qty += num;
         if ((this.qty += num) <= 0) {
@@ -109,9 +116,16 @@ let addToCart = async (req, currentUser, currentItem) => {
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
     req.flash('success', 'Successfully added to cart')
 };
-let removeFromCart = async (req, currentUser, currentItem) => {
-    req.session.cart.pull(newCartItem);
-    req.flash('info', 'Successfully added to cart')
+let removeFromCart = async (req, currentItem) => {
+    let { cart_item_id } = req.body;
+    // console.log(req.session.cart.length)
+    req.session.cart.forEach(function (element, index) {
+        if (element.id === cart_item_id) {
+            element.sort = 1;
+            req.session.cart.pop();
+            }
+    });
+    req.flash('info', 'Successfully removed from cart')
 };
 
 let changeQty = async (req) => {
@@ -142,7 +156,7 @@ let userEngage = async (req, currentUser, currentItem, itemId) => {
             await likeItem(req, currentUser, currentItem, itemId);
             break;
         case 'add':
-            await removeFromCart(req, currentUser, currentItem);
+            await addToCart(req, currentUser, currentItem);
             break;
         case 'update-cart':
             await changeQty(req);
@@ -160,8 +174,8 @@ let userDisengage = async (req, currentUser, currentItem, itemId) => {
         case 'like':
             await unlikeItem(req, currentUser, currentItem, itemId);
             break;
-        case 'add':
-            await removeFromCart(req, currentUser, currentItem);
+        case 'cart-remove':
+            await removeFromCart(req);
             break;
         
     };

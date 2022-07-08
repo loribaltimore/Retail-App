@@ -21,6 +21,24 @@ let userSchema = new Schema({
             billing: {
                 type: String,
                 required: true
+            },
+            geometry: {
+                type: {
+                    type: String,
+                    required: true
+                },
+                coordinates: [
+                    {
+                        lat: {
+                            type: Number,
+                            required: true
+                        },
+                        long: {
+                            type: Number,
+                            required: true
+                        }
+                    }
+                ]
             }
         },
         phone: {

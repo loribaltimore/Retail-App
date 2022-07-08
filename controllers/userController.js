@@ -73,13 +73,19 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
-///Then finish userDisengage 
-///removefromCart is last one to troubleshoot;
+
+//make sure you set up geometry in userModel correctly
+///continue creating algorithm to calculate tax rate and apply it in cart
 //start working on having totals calculated in cart
 ///find tax rate and incorporate;
 
+//can i make the class methods of ShoppingCartItem work inside of cart? 
+///Is it only a copy of newCartItem or does it retain methods? 
+///Can I not push an object with a function into an array and access that function?
+////I should split up some of the routing and controllers into smaller functions/more routes
 
 
+////Maybe I should make a review router
 ///reviews filter not working properly
 ///possibly make 'notifypricechange' more general so it can give ANY notification pushed to it
 ///rather than just notify price change!

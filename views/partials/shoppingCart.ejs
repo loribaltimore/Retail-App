@@ -18,16 +18,17 @@
             <p class="qty col qty-total"><%=item.qty%></p>
             <h5 class="qty col qty-add-btn">+</h5>
                 </div>
-             <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>?_method=PUT" method="POST">
-                
-                <input type="text" name="disengage[action]" value="">
+             <form action="http://localhost:3001/shop/<%=currentUser.id%>/<%=currentItem.category.main%>/<%=currentItem.id%>" method="POST">
+                <input type="text" name="disengage[action]" value="cart-remove" hidden>
+                <input type="text" name="cart_item_id" value="<%=item.id%>" hidden>
                 <button class="btn btn-danger cart-remove"><span class="cart-remove-text">Remove</span></button>
             </form>
-              
         </div>
-        
     </div>
         
+    <%}%>
+    <%if (cart !== undefined && cart.length){%>
+        <%=cart.map(x => x.price).reduce((a, b) => a + b)%>
     <%}%>
         <button type="submit" class="btn-close" aria-label="Close" id="shopping-cart-close-btn"></button>
 </div>
