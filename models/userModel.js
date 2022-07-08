@@ -25,20 +25,11 @@ let userSchema = new Schema({
             geometry: {
                 type: {
                     type: String,
-                    required: true
+                    enum: ['Point']
                 },
-                coordinates: [
-                    {
-                        lat: {
-                            type: Number,
-                            required: true
-                        },
-                        long: {
-                            type: Number,
-                            required: true
-                        }
-                    }
-                ]
+                coordinates: {
+                    type: Array,
+                }
             }
         },
         phone: {

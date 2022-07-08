@@ -5,12 +5,12 @@ let User = require('../models/userModel');
 let Item = require('../models/itemModel');
 
 let interest_engagement = async (req, res, next) => {
+    console.log('gettinghere')
     let itemUrl = /shop\/\w+\/\D+\/\w+/;
     let { userId, itemId } = req.params;
     let currentItemId = undefined;
     let startTime = undefined;
     let startingUrl = undefined;
-    let currentUser = await User.findById(userId);
     if (req.session.startingUrl === undefined
         && itemUrl.test(req.originalUrl) === true) {
         currentItemId = itemId;
@@ -18,8 +18,11 @@ let interest_engagement = async (req, res, next) => {
         startTime = Date.now();
         console.log(`New Starting Url added to session @ ${startTime}`)
     } else {
-        if (req.originalUrl !== req.session.startingUrl) {
+        if (req.originalUrl !== req.session.startingUrl
+        && req.params.category !== 'profile') {
+            console.log('also here')
             let { currentItemId } = req.session;
+            let currentUser = await User.findById(userId);
             let currentItem = await Item.findById(currentItemId);
             let endTime = Date.now();
             let totalTime = endTime - req.session.startTime;
@@ -44,7 +47,6 @@ let interest_engagement = async (req, res, next) => {
             };
         }
     }
-    
     return { startTime, startingUrl, currentItemId }
 };
 

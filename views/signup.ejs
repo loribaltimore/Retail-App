@@ -1,0 +1,17 @@
+<%-layout('./partials/boilerplate')%>
+<%-include('./partials/mapPopup')%>
+
+<div class="container row">
+<form action="http://localhost:3001/user/000/profile/signup" method="POST">
+<input type="text" name="bio[name]" placeholder="Name">
+<input type="text" name="bio[email]" placeholder="Email">
+<input type="text" name="bio[address][shipping]" placeholder="Shipping Address" id="shipping-address">
+<label for="same-as-billing">Same as Shipping</label>
+<input type="radio" id="same-as-billing" name="radio">
+<label for="not-same-as-billing">Enter Billing Address</label>
+<input type="radio" id="not-same-as-billing" name="radio">
+<input type="text" name="bio[address][billing]"  id="billing-input" placeholder="Billing Address" hidden>
+<button type="submit" hidden id="signup-submit-btn">Submit</button>
+</form>
+<button id="false-signup-btn">Submit</button>
+</div>

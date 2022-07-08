@@ -1,6 +1,9 @@
 let Item = require('../models/itemModel');
 let Review = require('../models/reviewModel');
 let mongoose = require('mongoose');
+let baseClient = require('@mapbox/mapbox-sdk/services/geocoding');
+const { transformAuthInfo } = require('passport');
+let geocoder = baseClient({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
 
 let removeItem = function (req) {
     console.log(req.session.cart.length)
@@ -221,8 +224,18 @@ let editReview = async (req, res, next) => {
     req.flash('success', 'Review Successfully Updated!');
 }
 
+let fetchLocationData = async (req, res, next) => {
+    let { address } = req.query;
+    let info = await geocoder.forwardGeocode({
+        query: address,
+        limit: 1
+    }).send()
+        .then(data => { return data.body.features[0].center }).catch(err => console.log(err));
+    return res.send(info)
+}
+
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
-    addReview, deleteReview, editReview
+    addReview, deleteReview, editReview, fetchLocationData
 };

@@ -271,3 +271,15 @@ border-width: 1px;
     max-width: 12rem
 }
 
+/* signup */
+#map-container{
+    max-width: 400px;
+    position: absolute;
+    left: 25rem;
+    z-index: 1;
+    padding: 0%;
+}
+.map-btn{
+    max-width: 50%;
+}
+

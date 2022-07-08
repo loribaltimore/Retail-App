@@ -169,3 +169,51 @@ if (editDecoy) {
         editForm.hidden = false;
     })
 }
+
+///signup script
+let notSameAsBillingBtn = document.getElementById('not-same-as-billing');
+let sameAsBillingBtn = document.getElementById('same-as-billing');
+let billingInput = document.getElementById('billing-input');
+let falseSignupBtn = document.getElementById('false-signup-btn');
+let mapp = document.getElementById('map');
+let shippingAddress = document.getElementById('shipping-address');
+let confirmAddress = document.getElementById('confirm-address');
+let reenterAddress = document.getElementById('reenter-address');
+let signupSubmit = document.getElementById('signup-submit-btn');
+
+if (notSameAsBillingBtn) {
+    notSameAsBillingBtn.addEventListener('click', (event) => {
+        billingInput.hidden = false;
+    });
+    sameAsBillingBtn.addEventListener('click', (event) => {
+        billingInput.hidden = true;
+    })
+    falseSignupBtn.addEventListener('click', async (event) => {
+       
+        let address = shippingAddress.value;
+        let info = await axios({
+            method: 'get',
+            url: `http://localhost:3001/user/000/profile/locationData?address=${address}`,
+        }).then(data => { console.log(data); return data }).catch(err => console.log(err));
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+            center: info.data, // starting position [lng, lat]
+            zoom: 16, // starting zoom
+            projection: 'globe' // display the map as a 3D globe
+        });
+        const marker = new mapboxgl.Marker({
+            color: '#c4d4f3',
+
+        }).setLngLat(info.data).addTo(map)
+        document.getElementById('map-container').hidden = false;
+        
+    });
+
+    if (confirmAddress) {
+        confirmAddress.addEventListener('click', (event) => {
+            document.getElementById('map-container').hidden = true;
+            signupSubmit.click();
+        })
+    }
+}

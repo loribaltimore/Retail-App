@@ -5,6 +5,7 @@ let Item = require('../itemModel');
 let User = require('../userModel');
 let Review = require('../reviewModel');
 let casual = require('casual');
+let { salesTaxByState } = require('./sales-tax');
 const { default: axios } = require('axios');
 mongoose.connect('mongodb://localhost:27017/amazon')
     .then(console.log('Database Ready for Seed'))
@@ -142,13 +143,24 @@ let addImg = async (req, res, next) => {
 // addImg();
 
 let locationTest = async () => {
+    let currentUser = await User.findById('62b1dc6f8f0a7fddbd777a97');
     let address = '427 Bellevue Way SE';
     let info = await mapboxClient.forwardGeocode({
         query: address,
         limit: 2
     }).send()
         .then(data => { return data }).catch(err => console.log(err));
-    console.log(info.body.features[0].geometry)
+    console.log(info.body.features[0].geometry);
+    currentUser.bio.address.geometry = info.body.features[0].geometry;
+    await currentUser.save();
+    console.log(currentUser.bio.address);
 };
 
 // locationTest();
+
+
+let test = function () {
+    console.log(salesTaxByState);
+};
+
+test();

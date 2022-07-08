@@ -73,7 +73,7 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
-
+///create a map popup to confirm address like a giga chad;
 //make sure you set up geometry in userModel correctly
 ///continue creating algorithm to calculate tax rate and apply it in cart
 //start working on having totals calculated in cart
@@ -112,5 +112,18 @@ module.exports.deleteNotifications = async (req, res, next) => {
    return `/shop/${userId}/${currentNotif.item.item_category}/${currentNotif.item.item_id.toString()}`
 }
 
+module.exports.renderSignup = async (req, res, next) => {
+    res.render('signup');
+}
+
+module.exports.createUser = async (req, res, next) => {
+    let { bio } = req.body;
+    console.log(bio);
+}
+
+////finish createUser
+///finish confirmation of address.
+//What happens when need to reenter? 
+////from there you can set sales tax. This way we can confirm user address perfectly when applying sales tax
 
 
