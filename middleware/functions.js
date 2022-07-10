@@ -230,7 +230,7 @@ let fetchLocationData = async (req, res, next) => {
         query: address,
         limit: 1
     }).send()
-        .then(data => { return data.body.features[0].center }).catch(err => console.log(err));
+        .then(data => { return data.body.features[0].geometry }).catch(err => console.log(err));
     return res.send(info)
 }
 

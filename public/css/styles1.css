@@ -282,4 +282,19 @@ border-width: 1px;
 .map-btn{
     max-width: 50%;
 }
+.state{
+    max-width: 4.25rem;
+}
+.zipcode{
+    max-width: 5.5rem;
+}
+.street-address{
+    max-width: 10rem;
+}
+.billing-radio{
+    max-width: 1rem;
+}
+.billing-label{
+    max-width: 12rem;
+}
 

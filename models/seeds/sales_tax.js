@@ -108,4 +108,5 @@ let states =
 
 module.exports.salesTaxByState = states.map(function (element, index) {
     return { state: element, rate: rates[index] };
-    })
+})
+module.exports.states = states;

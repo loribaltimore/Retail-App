@@ -15,21 +15,47 @@ let userSchema = new Schema({
         },
         address: {
             shipping: {
-                type: String,
-                required: true
+                street: {
+                    type: String,
+                    required: true
+                },
+                state: {
+                    type: String,
+                    required: true
+                },
+                zip: {
+                    type: String,
+                    required: true
+                }
             },
             billing: {
-                type: String,
-                required: true
+                street: {
+                    type: String,
+                    required: true
+                },
+                state: {
+                    type: String,
+                    required: true
+                },
+                zip: {
+                    type: String,
+                    required: true
+                }
             },
             geometry: {
                 type: {
                     type: String,
-                    enum: ['Point']
+                    enum: ['Point'],
+                    defualt: 'Point'
                 },
                 coordinates: {
                     type: Array,
+                    default: []
                 }
+            },
+            sales_tax: {
+                type: Number,
+                required: true
             }
         },
         phone: {

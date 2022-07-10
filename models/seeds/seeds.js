@@ -5,7 +5,7 @@ let Item = require('../itemModel');
 let User = require('../userModel');
 let Review = require('../reviewModel');
 let casual = require('casual');
-let { salesTaxByState } = require('./sales-tax');
+let { salesTaxByState } = require('./sales_tax');
 const { default: axios } = require('axios');
 mongoose.connect('mongodb://localhost:27017/amazon')
     .then(console.log('Database Ready for Seed'))
@@ -16,11 +16,11 @@ let mapboxClient = createClient({ accessToken: 'pk.eyJ1IjoibG9yaWJhMXRpbW9yZSIsI
 
 let getInfo = async (req, res, next) => {
     let allItems = await Item.find({});
-    let allUsers = await User.find({});
-    console.log(allUsers.length);
-   
+    let currentUser = await User.findById('62ae1b99a87bbbb9c2f64184');
+    currentUser.bio.address.salex_tax = 9.5
+    await currentUser.save();
 }
-// getInfo();
+getInfo();
 let seedUsers = async (req, res, next) => {
     for (let i = 0; i < 50; i++){
         let newUser = await new User({
@@ -163,4 +163,4 @@ let test = function () {
     console.log(salesTaxByState);
 };
 
-test();
+// test();

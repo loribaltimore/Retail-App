@@ -1,4 +1,56 @@
-
+let allStates =
+    [
+        'Alabama',
+        'Alaska',
+        'Arizona',
+        'Arkansas',
+        'California',
+        'Colorado',
+        'Connecticut',
+        'Delaware',
+        'Florida',
+        'Georgia',
+        'Hawaii',
+        'Idaho',
+        'Illinois',
+        'Indiana',
+        'Iowa',
+        'Kansas',
+        'Kentucky',
+        'Louisiana',
+        'Maine',
+        'Maryland',
+        'Massachusetts',
+        'Michigan',
+        'Minnesota',
+        'Mississippi',
+        'Missouri',
+        'Montana',
+        'Nebraska',
+        'Nevada',
+        'New Hampshire',
+        'New Jersey',
+        'New Mexico',
+        'New York',
+        'North Carolina',
+        'North Dakota',
+        'Ohio',
+        'Oklahoma',
+        'Oregon',
+        'Pennsylvania',
+        'Rhode Island',
+        'South Carolina',
+        'South Dakota',
+        'Tennessee',
+        'Texas',
+        'Utah',
+        'Vermont',
+        'Virginia',
+        'Washington',
+        'West Virginia',
+        'Wisconsin',
+        'Wyoming'
+    ];
 let deletePopup = document.getElementById('delete-item-popup');
 let deleteListingBtn = document.getElementById('delete-listing-btn');
 let keepItem = document.getElementById('keep-item');
@@ -9,7 +61,6 @@ let updateCheckbox = document.querySelectorAll('.update-item-checkbox');
 let cancelUpdate = document.getElementById('cancel-update-btn');
 let notifBtn = document.getElementById('notif-btn');
 let notifCount = document.getElementById('notif-count');
-
 if (deleteListingBtn) {
     deleteListingBtn.addEventListener('click', (event) => {
         console.log('sparky')
@@ -180,40 +231,71 @@ let shippingAddress = document.getElementById('shipping-address');
 let confirmAddress = document.getElementById('confirm-address');
 let reenterAddress = document.getElementById('reenter-address');
 let signupSubmit = document.getElementById('signup-submit-btn');
+let phoneInput = document.getElementById('phone-input');
 
 if (notSameAsBillingBtn) {
+    let coord = undefined;
     notSameAsBillingBtn.addEventListener('click', (event) => {
         billingInput.hidden = false;
     });
     sameAsBillingBtn.addEventListener('click', (event) => {
         billingInput.hidden = true;
+        console.log(event.target.checked)
     })
     falseSignupBtn.addEventListener('click', async (event) => {
-       
-        let address = shippingAddress.value;
-        let info = await axios({
-            method: 'get',
-            url: `http://localhost:3001/user/000/profile/locationData?address=${address}`,
-        }).then(data => { console.log(data); return data }).catch(err => console.log(err));
-        const map = new mapboxgl.Map({
-            container: 'map', // container ID
-            style: 'mapbox://styles/mapbox/streets-v11', // style URL
-            center: info.data, // starting position [lng, lat]
-            zoom: 16, // starting zoom
-            projection: 'globe' // display the map as a 3D globe
-        });
-        const marker = new mapboxgl.Marker({
-            color: '#c4d4f3',
-
-        }).setLngLat(info.data).addTo(map)
-        document.getElementById('map-container').hidden = false;
-        
+        let street = document.getElementById('shipping-street');
+        let state = document.getElementById('shipping-state');
+        let zipcode = document.getElementById('shipping-zip');
+        let address = `${street.value} ${state.value}, ${zipcode.value}`;
+        if (allStates.indexOf(state.value) > -1) {
+            let info = await axios({
+                method: 'get',
+                url: `http://localhost:3001/user/000/profile/locationData?address=${address}`,
+            }).then(data => { console.log(data); return data }).catch(err => console.log(err));
+            let { coordinates } = info.data;
+            coord = coordinates;
+            const map = new mapboxgl.Map({
+                container: 'map', // container ID
+                style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                center: coordinates, // starting position [lng, lat]
+                zoom: 16, // starting zoom
+                projection: 'globe' // display the map as a 3D globe
+            });
+            const marker = new mapboxgl.Marker({
+                color: '#c4d4f3',
+            }).setLngLat(coordinates).addTo(map)
+            document.getElementById('map-container').hidden = false;
+        } else {
+            document.getElementById('map-container').hidden = true;
+        }
     });
 
     if (confirmAddress) {
         confirmAddress.addEventListener('click', (event) => {
             document.getElementById('map-container').hidden = true;
+            let geometry = document.getElementById('geometry-input');
+            geometry.value = coord;
+            if (sameAsBillingBtn.checked === true) {
+                document.getElementById('billing-street').value = document.getElementById('shipping-street').value;
+                document.getElementById('billing-state').value = document.getElementById('shipping-state').value;
+        document.getElementById('billing-zip').value = document.getElementById('shipping-zip').value;
+            };
             signupSubmit.click();
+        });
+        reenterAddress.addEventListener('click', (event) => {
+            document.getElementById('map-container').hidden = true;
+           document.getElementById('shipping-street').value = '';
+            document.getElementById('shipping-state').value = '';
+        document.getElementById('shipping-zip').value = '';
         })
-    }
+    };
+
+
+    phoneInput.addEventListener('keypress', (event) => {
+        if (phoneInput.value.length === 3) {
+            phoneInput.value = `(${phoneInput.value})`
+        } else if (phoneInput.value.length === 8) {
+            phoneInput.value = `${phoneInput.value} -`
+        };
+    });
 }

@@ -5,12 +5,27 @@
 <form action="http://localhost:3001/user/000/profile/signup" method="POST">
 <input type="text" name="bio[name]" placeholder="Name">
 <input type="text" name="bio[email]" placeholder="Email">
-<input type="text" name="bio[address][shipping]" placeholder="Shipping Address" id="shipping-address">
-<label for="same-as-billing">Same as Shipping</label>
-<input type="radio" id="same-as-billing" name="radio">
-<label for="not-same-as-billing">Enter Billing Address</label>
-<input type="radio" id="not-same-as-billing" name="radio">
-<input type="text" name="bio[address][billing]"  id="billing-input" placeholder="Billing Address" hidden>
+<div class="row" id="address-div">
+    <label for="-div">Address</label>
+<input type="text" name="bio[address][shipping][street]" placeholder="Street" id="shipping-street" class="col street-address">
+<input type="text" name="bio[address][shipping][state]" placeholder="State" id="shipping-state" class="col state">
+<input type="text" name="bio[address][shipping][zip]" placeholder="Zipcode" id="shipping-zip" class="col zipcode">
+<div class="row">
+    <label for="same-as-billing" class="col billing-label">Same as Shipping</label>
+<input type="radio" id="same-as-billing" name="radio" class="billing-radio col">
+
+    <label for="not-same-as-billing" class="col billing-label">Enter Billing Address</label>
+    <input type="radio" id="not-same-as-billing" name="radio" class="billing-radio col">
+    
+</div>
+<div class="row" id="billing-input" hidden>
+<input type="text" name="bio[address][billing][street]" placeholder="Street" id="billing-street" class="col street-address">
+<input type="text" name="bio[address][billing][state]" placeholder="State" id="billing-state" class="col state">
+<input type="text" name="bio[address][billing][zip]" placeholder="Zipcode" id="billing-zip" class="col zipcode">
+</div>
+</div>
+<input type="text" name="bio[address][geometry]" id="geometry-input" hidden>
+<input type="text" name="bio[phone]" id="phone-input" placeholder="Phone Number">
 <button type="submit" hidden id="signup-submit-btn">Submit</button>
 </form>
 <button id="false-signup-btn">Submit</button>

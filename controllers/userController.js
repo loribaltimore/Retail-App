@@ -2,6 +2,7 @@ let Item = require('../models/itemModel');
 let mongoose = require('mongoose');
 const User = require('../models/userModel');
 const { notifyPriceChange } = require('../middleware/functions');
+let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62ae1b99a87bbbb9c2f64184');
@@ -117,13 +118,30 @@ module.exports.renderSignup = async (req, res, next) => {
 }
 
 module.exports.createUser = async (req, res, next) => {
-    let { bio } = req.body;
-    console.log(bio);
+    let { name, email, address, phone } = req.body.bio;
+    let { shipping, billing } = address;
+    let geo = req.body.bio.address.geometry.split(',').map(x => parseFloat(x));
+    let phoneModified = phone.match(/[0-9]/g).join('');
+    let salesTax = salesTaxByState[states.indexOf(shipping.state)];
+    console.log(salesTax)
+    let newUser = await new User({
+        bio: {
+            name,
+            email,
+            address: {
+                shipping,
+                billing,
+                geometry: { type: 'Point', coordinates: geo },
+                sales_tax: salesTax.rate
+            },
+            phone: phoneModified
+        }
+    });
+    console.log(newUser.bio.address)
+    
 }
 
-////finish createUser
-///finish confirmation of address.
-//What happens when need to reenter? 
-////from there you can set sales tax. This way we can confirm user address perfectly when applying sales tax
-
+///go and reseed users to conform to new bio.address standards
+///figure out why you cant add items to your cart
+///make sure sales tax is working
 
