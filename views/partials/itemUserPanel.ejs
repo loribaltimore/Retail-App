@@ -1,3 +1,4 @@
+
 <%if (!/shop/.test(currentUrl)) {%>
     <div class="col text-center" id="item-user-panel">
         <div>
@@ -33,10 +34,10 @@
         method="POST" id="eng-form">
     <div>
         <h5 id="add-btn" class="eng-btn add">Add to Cart</h5>
-       <% if (cart.map(x => x.name).indexOf(currentItem.name) === -1){%>
+       <% if (cart.items === undefined){%>
         <input type="radio" name="engage[action]" value="add" id="add-input " class="eng-input" hidden>
         <%} else {%>
-            <input type="radio" name="disengage[action]" value="update-cart" id="add-input " class="eng-input" hidden>
+            <input type="radio" name="engage[action]" value="update-cart" id="add-input " class="eng-input" hidden>
             <input type="text" name="cartItems" value="<%=currentItem.name%>::1" hidden>
             <%}%>
     </div>

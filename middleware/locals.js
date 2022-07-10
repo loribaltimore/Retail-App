@@ -1,7 +1,7 @@
 let User = require('../models/userModel');
 
 module.exports.locals = async (req, res, next) => {
-    let currentUser = await User.findById('62ae1b99a87bbbb9c2f64184');
+    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.info = req.flash('info');
@@ -14,8 +14,9 @@ module.exports.locals = async (req, res, next) => {
     res.locals.prevUrl = 5;
     res.locals.currentUrl = req.originalUrl;
     res.locals.currentUser = currentUser;
-    if (req.session.cart) {
-        res.locals.cart = req.session.cart.map(function (element, index) {
+
+    if (req.session.cart !== undefined && req.session.cart.length) {
+        let allItems = req.session.cart[0].items.map(function (element, index) {
             return {
                 name: element.item.name,
                 price: element.item.price,
@@ -24,6 +25,11 @@ module.exports.locals = async (req, res, next) => {
                 id: element.id
             }
         });
+        res.locals.cart = {
+            items: [].concat(allItems),
+            subtotal: req.session.cart[0].subtotal,
+            total: req.session.cart[0].total
+        }
     } else { res.locals.cart = [] };
     res.locals.allNotifs = currentUser.notifications;
     next();

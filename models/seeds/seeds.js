@@ -16,19 +16,30 @@ let mapboxClient = createClient({ accessToken: 'pk.eyJ1IjoibG9yaWJhMXRpbW9yZSIsI
 
 let getInfo = async (req, res, next) => {
     let allItems = await Item.find({});
-    let currentUser = await User.findById('62ae1b99a87bbbb9c2f64184');
-    currentUser.bio.address.salex_tax = 9.5
-    await currentUser.save();
+    let allUsers = await User.find({});
+    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
+    console.log(currentUser);
 }
 getInfo();
 let seedUsers = async (req, res, next) => {
+    let allUsers = await User.deleteMany({});
     for (let i = 0; i < 50; i++){
         let newUser = await new User({
             bio: {
                 name: casual.first_name,
+                email: `${casual.word}@gmail.com`,
                 address: {
-                    shipping: casual.address,
-                    billing: casual.address
+                    shipping: {
+                        street: casual.address1,
+                        state: casual.state,
+                        zip: casual.zip(digits = 5)
+                    },
+                    billing: {
+                        street: casual.address1,
+                        state: casual.state,
+                        zip: casual.zip(digits = 5)
+                    },
+                    sales_tax: 9.5
                 },
                 phone: casual.phone,
             }
@@ -44,6 +55,7 @@ let seedReviews = async (req, res, next) => {
     let allUsers = await User.find({});
     let allItems = await Item.find({});
         ///delete all Reviews
+    await Review.deleteMany({});
     ///change all item reviews to 0 / 0
     allItems.forEach(async (element, index) => {
         element.reviews = { qty: 0, total_rating: 0, all_reviews: [] }
@@ -72,9 +84,9 @@ let seedReviews = async (req, res, next) => {
                 total_rating: randomItem.reviews.total_rating += newReview.rating,
                 all_reviews: allReviews
             }
-        }, {new: true}).then(data => console.log(data)).catch(err => console.log(err));
+        }); 
         ////and update the user.
-        element.reviews.push(newReview.id);
+        element.history.reviews.push(newReview.id);
         await element.save();
         
     });
@@ -85,12 +97,12 @@ for (let i = 0; i < 10; i++){
 }
 
 let seedClothing = async (req, res, next) => {
-    // await Item.deleteMany({});
-    let currentUser = await User.findById('62b1dc6f8f0a7fddbd777a97');
+    await Item.deleteMany({});
+    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     currentUser.history.created = [];
     for (let i = 0; i < 20; i++){
         let newItem = await new Item({
-            name: 'Mens Pants',
+            name: casual.word,
             category: {
                 catId: mongoose.Types.ObjectId(),
                 main: 'clothing',
@@ -111,7 +123,7 @@ let seedClothing = async (req, res, next) => {
                 qty: 10,
                 avg: Math.floor(Math.random() * 5)
             },
-            description: 'Manly pants for hard working men!',
+            description: casual.sentence,
             author: '62b1dc6f8f0a7fddbd777a97',
         }).save()
             .then(data => {return data})

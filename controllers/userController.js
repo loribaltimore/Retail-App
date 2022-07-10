@@ -5,7 +5,7 @@ const { notifyPriceChange } = require('../middleware/functions');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 module.exports.renderHome = async (req, res, next) => {
-    let currentUser = await User.findById('62ae1b99a87bbbb9c2f64184');
+    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     res.render('home', {currentUser});
 }
 
@@ -141,7 +141,7 @@ module.exports.createUser = async (req, res, next) => {
     
 }
 
-///go and reseed users to conform to new bio.address standards
-///figure out why you cant add items to your cart
-///make sure sales tax is working
+///go in an change the route for posting changeQty in the userScript. 
+///user must be able to update qty from any page, so using a 'currentItem' id doesnt make sense.
+///fix the route, ensure sales tax is working.
 

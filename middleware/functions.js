@@ -6,11 +6,28 @@ const { transformAuthInfo } = require('passport');
 let geocoder = baseClient({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
 
 let removeItem = function (req) {
-    console.log(req.session.cart.length)
+    console.log(req.session.cart[0].items.length)
     this.sort = 1;
     req.session.cart.sort((a, b) => a - b).pop();
-    console.log(req.session.cart.length)
+};
+
+let getTotal = function (req, shoppingCart) {
+    shoppingCart.subtotal = shoppingCart.items.map(function (element, index) {
+        return element.item.price * element.qty
+    }).reduce((a, b) => a + b);
+    shoppingCart.total = shoppingCart.subtotal + parseFloat((shoppingCart.subtotal * shoppingCart.tax)
+        .toString().slice(0,4));
+};
+
+class ShoppingCart{
+    constructor(items, subtotal, total, tax) {
+        this.items = [];
+        this.subtotal = 0;
+        this.total = 0; 
+        this.tax = (tax*0.01);
+    }
 }
+
 
 class ShoppingCartItem{
     constructor(item, qty, sort) {
@@ -110,10 +127,16 @@ let unlikeItem = async (req, currentUser, currentItem, itemId) => {
 
 let addToCart = async (req, currentUser, currentItem) => {
     let newCartItem = new ShoppingCartItem(currentItem, 1);
-    if (!req.session.cart) {
-        req.session.cart = [].concat(newCartItem);
+    if (req.session.cart === undefined || req.session.cart.length === 0) {
+        let newCart = new ShoppingCart([], 0, 0, currentUser.bio.address.sales_tax);
+        req.session.cart = [].concat(newCart);
+        req.session.cart[0].items.push(newCartItem);
+        getTotal(req, req.session.cart[0]);
+        console.log(newCartItem);
+        console.log(req.session.cart[0]);
     } else {
-        req.session.cart.push(newCartItem);
+        req.session.cart[0].items.push(newCartItem);
+        getTotal(req, req.session.cart[0]);
     }
     currentItem.user_engagement.total_interest += 1
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
@@ -122,10 +145,10 @@ let addToCart = async (req, currentUser, currentItem) => {
 let removeFromCart = async (req, currentItem) => {
     let { cart_item_id } = req.body;
     // console.log(req.session.cart.length)
-    req.session.cart.forEach(function (element, index) {
+    req.session.cart[0].items.forEach(function (element, index) {
         if (element.id === cart_item_id) {
             element.sort = 1;
-            req.session.cart.pop();
+            req.session.cart[0].items.pop();
             }
     });
     req.flash('info', 'Successfully removed from cart')
@@ -133,16 +156,19 @@ let removeFromCart = async (req, currentItem) => {
 
 let changeQty = async (req) => {
     let { cartItems } = req.body;
-    req.session.cart.forEach(function (element, index) {
+    req.session.cart[0].items.forEach(function (element, index) {
         if (typeof cartItems !== 'string') {
             let cartItemNames = cartItems.map(x => x.item);
             if (cartItemNames.indexOf(element.item.name) >= 0) {
                 element.qty = parseInt(cartItems[cartItemNames.indexOf(element.item.name)].qty);
+                getTotal(req, req.session.cart[0]);
             }
         } else {
             cartItems = cartItems.split('::');
             if (cartItems[0] === element.item.name) {
                 element.qty = parseInt(element.qty) + 1;
+                getTotal(req, req.session.cart[0]);
+
             }
         }
     });
@@ -237,5 +263,5 @@ let fetchLocationData = async (req, res, next) => {
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
-    addReview, deleteReview, editReview, fetchLocationData
+    addReview, deleteReview, editReview, fetchLocationData, ShoppingCart
 };

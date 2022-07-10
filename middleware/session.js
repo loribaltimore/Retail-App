@@ -3,9 +3,9 @@ let Schema = mongoose.Schemal
 let model = mongoose.model;
 let User = require('../models/userModel');
 let Item = require('../models/itemModel');
+let {ShoppingCart} = require('../middleware/functions')
 
 let interest_engagement = async (req, res, next) => {
-    console.log('gettinghere')
     let itemUrl = /shop\/\w+\/\D+\/\w+/;
     let { userId, itemId } = req.params;
     let currentItemId = undefined;
@@ -53,7 +53,7 @@ let interest_engagement = async (req, res, next) => {
 module.exports.session = async (req, res, next) => {
     if (req.session.cart === undefined) {
         req.session.cart = [];
-    } else {console.log(req.session.cart)};
+    } else {console.log(req.session.cart[0] instanceof ShoppingCart)};
     req.session.prevUrl = req.session.currentUrl;
     req.session.currentUrl = req.originalUrl;
     let interest = await interest_engagement(req)
