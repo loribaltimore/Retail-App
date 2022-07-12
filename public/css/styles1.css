@@ -157,7 +157,8 @@ border-width: 1px;
     background-color: lightgoldenrodyellow;
     padding: 1%;
     border-style: solid;
-    left: 47rem
+    left: 47rem;
+    z-index: 1;
 }
 .cart-remove{
     position: absolute;

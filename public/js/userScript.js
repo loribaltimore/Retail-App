@@ -125,6 +125,8 @@ let allReviewsHigh = document.getElementById('all-reviews-high');
 let allReviewsLow = document.getElementById('all-reviews-low');
 let filterHighBtn = document.getElementById('high');
 let filterLowBtn = document.getElementById('low');
+let cartTotal = document.getElementById('cart-total');
+
 
 let getEvent = (event) => {
     console.log(event.path)
@@ -132,7 +134,6 @@ let getEvent = (event) => {
     engagementForm.removeEventListener('click', getEvent);
     input.click();
     engagementForm.submit();
-    console.log('should be working')
 }
 
 if (engagementForm) {
@@ -145,10 +146,18 @@ if (qtyNumDiv) {
     qtyNumDiv.forEach(function (element, index) {
         element.addEventListener('click', (event) => {
             if (event.target.innerText === '+') {
-                element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) + 1
-            } else if (event.target.innerText === '-'
-                && element.childNodes[3].innerText !== '0') {
-                element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) - 1
+                element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) + 1;
+                let itemCost = parseFloat(event.path[3].childNodes[1].childNodes[5].innerText.slice(1));
+                cartTotal.innerText = `$${(((itemCost * parseFloat(tax_rate) + itemCost)) * parseInt(element.childNodes[3].innerText)).toString()
+                    .match((/\d+\.\d\d/))[0]}`;
+            } else if (event.target.innerText === '-') {
+                if (element.childNodes[3].innerText !== '1') {
+                    element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) - 1;
+                    let itemCost = parseFloat(event.path[3].childNodes[1].childNodes[5].innerText.slice(1));
+                    cartTotal.innerText = `$${(((itemCost * parseFloat(tax_rate) + itemCost)) * parseInt(element.childNodes[3].innerText)).toString()
+                        .match((/\d+\.\d\d/))[0]}`;
+                }
+               
             }
         })
     });
@@ -156,6 +165,7 @@ if (qtyNumDiv) {
 
 if (updateCart) {
     updateCart.addEventListener('click', async (event) => {
+        let test = undefined;
         let cartItemsObj = [];
        cartItems.forEach(function (element, index) {
             cartItemsObj.push({
@@ -164,21 +174,21 @@ if (updateCart) {
             }) 
        });
         shoppingCart.hidden = true;
-       await axios({
+        await axios({
             method: 'post',
-            url: `http://localhost:3001/shop/${currentUserId}/${itemCategory}/${currentItemId}`,
+            url: `http://localhost:3001/shop/${currentUserId}/cart/qty`,
             data: {
-                engage: {
-                    action: 'update-cart'
-                },
-                cartItems: cartItemsObj
+                action: 'update-cart',
+                cartItems: cartItemsObj,
+                type: 'fetch'
             },
-        }).then(data => console.log(data)).catch(err => console.log(err))
+        }).then(data => {  }).catch(err => console.log(err));
+        
     })
 }
 
 
-if (shoppingCartBtn) {
+if (shoppingCart) {
     shoppingCartBtn.addEventListener('click', (event) => {
         if (shoppingCart.hidden === true) {
             shoppingCart.hidden = false

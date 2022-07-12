@@ -35,11 +35,10 @@ module.exports.renderItem = async (req, res, next) => {
 
 module.exports.itemEngagement = async (req, res, next) => {
     let { itemId, category, userId } = req.params;
-    
     let currentUser = await User.findById(userId);
     let currentItem = await Item.findById(itemId);
     if (req.body.engage) {
-        await userEngage(req, currentUser, currentItem, itemId);
+        await userEngage(req, res, next, currentUser, currentItem, itemId);
     } else {
         await userDisengage(req, currentUser, currentItem, itemId);
     };

@@ -11,12 +11,15 @@ let removeItem = function (req) {
     req.session.cart.sort((a, b) => a - b).pop();
 };
 
-let getTotal = function (req, shoppingCart) {
+let getTotal = function (req, res, shoppingCart) {
     shoppingCart.subtotal = shoppingCart.items.map(function (element, index) {
         return element.item.price * element.qty
     }).reduce((a, b) => a + b);
     shoppingCart.total = shoppingCart.subtotal + parseFloat((shoppingCart.subtotal * shoppingCart.tax)
-        .toString().slice(0,4));
+        .toString().slice(0, 4));
+    res.locals.cart.subtotal = shoppingCart.subtotal;
+    res.locals.cart.total = shoppingCart.total;
+    return shoppingCart.total;
 };
 
 class ShoppingCart{
@@ -125,15 +128,14 @@ let unlikeItem = async (req, currentUser, currentItem, itemId) => {
     req.flash('info', `You un-liked ${currentItem.name}`)
 };
 
-let addToCart = async (req, currentUser, currentItem) => {
+let addToCart = async (req, res, currentUser, currentItem) => {
+    console.log('working')
     let newCartItem = new ShoppingCartItem(currentItem, 1);
     if (req.session.cart === undefined || req.session.cart.length === 0) {
         let newCart = new ShoppingCart([], 0, 0, currentUser.bio.address.sales_tax);
         req.session.cart = [].concat(newCart);
         req.session.cart[0].items.push(newCartItem);
-        getTotal(req, req.session.cart[0]);
-        console.log(newCartItem);
-        console.log(req.session.cart[0]);
+        getTotal(req, res, req.session.cart[0]);
     } else {
         req.session.cart[0].items.push(newCartItem);
         getTotal(req, req.session.cart[0]);
@@ -142,40 +144,48 @@ let addToCart = async (req, currentUser, currentItem) => {
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
     req.flash('success', 'Successfully added to cart')
 };
-let removeFromCart = async (req, currentItem) => {
+let removeFromCart = async (req, res, currentItem) => {
+    console.log('removing')
     let { cart_item_id } = req.body;
-    // console.log(req.session.cart.length)
     req.session.cart[0].items.forEach(function (element, index) {
         if (element.id === cart_item_id) {
             element.sort = 1;
             req.session.cart[0].items.pop();
             }
     });
-    req.flash('info', 'Successfully removed from cart')
+    console.log('getting down here')
+    req.flash('info', 'Successfully removed from cart');
+   return res.redirect(req.originalUrl);
 };
 
-let changeQty = async (req) => {
-    let { cartItems } = req.body;
+let changeQty = async (req, res, next) => {
+    let { cartItems, type } = req.body;
+    let newTotal = undefined;
+    let updatedQtyBy = 1;
+    let originalQty = req.session.cart[0].items[0].qty;
     req.session.cart[0].items.forEach(function (element, index) {
         if (typeof cartItems !== 'string') {
             let cartItemNames = cartItems.map(x => x.item);
             if (cartItemNames.indexOf(element.item.name) >= 0) {
                 element.qty = parseInt(cartItems[cartItemNames.indexOf(element.item.name)].qty);
-                getTotal(req, req.session.cart[0]);
+                updatedQtyBy = element.qty - originalQty;
+               newTotal = getTotal(req, res, req.session.cart[0]);
             }
         } else {
             cartItems = cartItems.split('::');
             if (cartItems[0] === element.item.name) {
                 element.qty = parseInt(element.qty) + 1;
-                getTotal(req, req.session.cart[0]);
-
+               newTotal = getTotal(req, res, req.session.cart[0]);
             }
         }
     });
+    if (type === 'fetch') {
+       return res.send({ total: newTotal, updatedBy: updatedQtyBy });
+    };
 };
 
 
-let userEngage = async (req, currentUser, currentItem, itemId) => {
+let userEngage = async (req, res, next, currentUser, currentItem, itemId) => {
     let { action } = req.body.engage;
     switch (action) {
         case 'watch':
@@ -185,12 +195,11 @@ let userEngage = async (req, currentUser, currentItem, itemId) => {
             await likeItem(req, currentUser, currentItem, itemId);
             break;
         case 'add':
-            await addToCart(req, currentUser, currentItem);
+            await addToCart(req, res, currentUser, currentItem);
             break;
-        case 'update-cart':
-            await changeQty(req);
-            break;
-        
+            case 'update-cart':
+                await changeQty(req, res, next);
+            break;  
     };
 };
 
@@ -203,10 +212,7 @@ let userDisengage = async (req, currentUser, currentItem, itemId) => {
         case 'like':
             await unlikeItem(req, currentUser, currentItem, itemId);
             break;
-        case 'cart-remove':
-            await removeFromCart(req);
-            break;
-        
+           
     };
 }
 
@@ -263,5 +269,6 @@ let fetchLocationData = async (req, res, next) => {
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
-    addReview, deleteReview, editReview, fetchLocationData, ShoppingCart
+    addReview, deleteReview, editReview, fetchLocationData, ShoppingCart,
+    changeQty, removeFromCart
 };

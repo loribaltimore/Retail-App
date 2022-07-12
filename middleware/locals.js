@@ -28,7 +28,8 @@ module.exports.locals = async (req, res, next) => {
         res.locals.cart = {
             items: [].concat(allItems),
             subtotal: req.session.cart[0].subtotal,
-            total: req.session.cart[0].total
+            total: req.session.cart[0].total,
+            tax: req.session.cart[0].tax
         }
     } else { res.locals.cart = [] };
     res.locals.allNotifs = currentUser.notifications;

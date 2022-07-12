@@ -1,4 +1,8 @@
-
+<script>
+    let currentUserId = '<%=currentUser.id%>';
+    let currentItemId = '<%=currentItem.id%>'
+    let itemCategory = '<%=currentItem.category.main%>';
+ </script>
 <%-layout('./partials/boilerplate.ejs')%>
 
 <%-include('./partials/backBtn')%>
@@ -7,6 +11,5 @@
 <%-include('./partials/deleteItemPopup')%>
 <%-include('./partials/updateItemPopup')%>
 
-<%-include('./partials/shoppingCart')%>
 <%-include('./partials/itemUserPanel')%>
 
