@@ -62,6 +62,5 @@ module.exports.session = async (req, res, next) => {
     req.session.startTime = interest.startTime;
     req.session.startingUrl = interest.startingUrl;
     req.session.currentItemId = interest.currentItemId;
-    console.log(req.session.cart[0])
     next();
 }

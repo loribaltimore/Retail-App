@@ -146,16 +146,29 @@ if (qtyNumDiv) {
     qtyNumDiv.forEach(function (element, index) {
         element.addEventListener('click', (event) => {
             if (event.target.innerText === '+') {
+                let cartTotalInt = 0;
                 element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) + 1;
-                let itemCost = parseFloat(event.path[3].childNodes[1].childNodes[5].innerText.slice(1));
-                cartTotal.innerText = `$${(((itemCost * parseFloat(tax_rate) + itemCost)) * parseInt(element.childNodes[3].innerText)).toString()
-                    .match((/\d+\.\d\d/))[0]}`;
+                cartItems.forEach((element, index) => {
+                    let itemCost = parseFloat(element.childNodes[1].childNodes[5].innerText.slice(1));
+                    console.log(itemCost)
+                    let itemQty = (element.childNodes[3].childNodes[3].childNodes[3].innerText);
+                    console.log(itemQty)
+                    let itemTotal = ((itemCost * parseFloat(tax_rate) + itemCost)) * itemQty;
+                    console.log(itemTotal);
+                    cartTotalInt += itemTotal;
+                });
+                cartTotal.innerText = `$${cartTotalInt.toString().match(/\d+\.\d\d/)[0]}`
             } else if (event.target.innerText === '-') {
                 if (element.childNodes[3].innerText !== '1') {
+                    let cartTotalInt = 0;
                     element.childNodes[3].innerText = parseInt(element.childNodes[3].innerText) - 1;
-                    let itemCost = parseFloat(event.path[3].childNodes[1].childNodes[5].innerText.slice(1));
-                    cartTotal.innerText = `$${(((itemCost * parseFloat(tax_rate) + itemCost)) * parseInt(element.childNodes[3].innerText)).toString()
-                        .match((/\d+\.\d\d/))[0]}`;
+                    cartItems.forEach((element, index) => {
+                        let itemCost = parseFloat(element.childNodes[1].childNodes[5].innerText.slice(1));
+                        let itemQty = (element.childNodes[3].childNodes[3].childNodes[3].innerText);
+                        let itemTotal = ((itemCost * parseFloat(tax_rate) + itemCost)) * itemQty;
+                        cartTotalInt += itemTotal;
+                    });
+                    cartTotal.innerText = `$${cartTotalInt.toString().match(/\d+\.\d\d/)[0]}`
                 }
                
             }

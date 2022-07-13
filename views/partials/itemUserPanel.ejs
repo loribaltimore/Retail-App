@@ -33,7 +33,7 @@
         method="POST" id="eng-form">
     <div>
         <h5 id="add-btn" class="eng-btn add">Add to Cart</h5>
-       <% if (cart.items === undefined){%>
+       <% if (!cart.items || cart.items.map(x => x.name).indexOf(currentItem.name) === -1){%>
         <input type="radio" name="engage[action]" value="add" id="add-input " class="eng-input" hidden>
         <%} else {%>
             <input type="radio" name="engage[action]" value="update-cart" id="add-input " class="eng-input" hidden>

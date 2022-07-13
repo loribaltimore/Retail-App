@@ -12,9 +12,11 @@ let removeItem = function (req) {
 };
 
 let getTotal = function (req, res, shoppingCart) {
-    shoppingCart.subtotal = shoppingCart.items.map(function (element, index) {
-        return element.item.price * element.qty
-    }).reduce((a, b) => a + b);
+    if (shoppingCart.items && shoppingCart.items.length) {
+        shoppingCart.subtotal = shoppingCart.items.map(function (element, index) {
+            return element.item.price * element.qty
+        }).reduce((a, b) => a + b);
+    } else {shoppingCart.subtotal = 0.00}
     shoppingCart.total = shoppingCart.subtotal + parseFloat((shoppingCart.subtotal * shoppingCart.tax)
         .toString().slice(0, 4));
     res.locals.cart.subtotal = shoppingCart.subtotal;
@@ -129,7 +131,6 @@ let unlikeItem = async (req, currentUser, currentItem, itemId) => {
 };
 
 let addToCart = async (req, res, currentUser, currentItem) => {
-    console.log('working')
     let newCartItem = new ShoppingCartItem(currentItem, 1);
     if (req.session.cart === undefined || req.session.cart.length === 0) {
         let newCart = new ShoppingCart([], 0, 0, currentUser.bio.address.sales_tax);
@@ -138,14 +139,14 @@ let addToCart = async (req, res, currentUser, currentItem) => {
         getTotal(req, res, req.session.cart[0]);
     } else {
         req.session.cart[0].items.push(newCartItem);
-        getTotal(req, req.session.cart[0]);
+        getTotal(req, res, req.session.cart[0]);
     }
     currentItem.user_engagement.total_interest += 1
     currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    console.log(req.session.cart[0]);
     req.flash('success', 'Successfully added to cart')
 };
 let removeFromCart = async (req, res, currentItem) => {
-    console.log('removing')
     let { cart_item_id } = req.body;
     req.session.cart[0].items.forEach(function (element, index) {
         if (element.id === cart_item_id) {
@@ -153,13 +154,15 @@ let removeFromCart = async (req, res, currentItem) => {
             req.session.cart[0].items.pop();
             }
     });
-    console.log('getting down here')
+    getTotal(req, res, req.session.cart[0]);
+    console.log(req.session.cart[0])
     req.flash('info', 'Successfully removed from cart');
-   return res.redirect(req.originalUrl);
+   return res.redirect(req.session.prevUrl);
 };
 
 let changeQty = async (req, res, next) => {
     let { cartItems, type } = req.body;
+    console.log('its working')
     let newTotal = undefined;
     let updatedQtyBy = 1;
     let originalQty = req.session.cart[0].items[0].qty;
@@ -172,13 +175,15 @@ let changeQty = async (req, res, next) => {
                newTotal = getTotal(req, res, req.session.cart[0]);
             }
         } else {
-            cartItems = cartItems.split('::');
-            if (cartItems[0] === element.item.name) {
+            cartItemsArr = cartItems.split('::');
+            if (cartItemsArr[0] === element.item.name) {
                 element.qty = parseInt(element.qty) + 1;
                newTotal = getTotal(req, res, req.session.cart[0]);
             }
         }
     });
+    console.log(req.session.cart[0]);
+
     if (type === 'fetch') {
        return res.send({ total: newTotal, updatedBy: updatedQtyBy });
     };
@@ -246,13 +251,17 @@ let deleteReview = async (req, currentUser, currentItem) => {
 };
 
 let editReview = async (req, res, next) => {
-    let { reviewId } = req.params;
+    let { reviewId, itemId } = req.params;
     let { review_body, rating } = req.body.review;
     console.log(review_body, rating);
     let review = await Review.findById(reviewId);
     console.log(review)
+    let currentItem = await Item.findById(itemId);
+    console.log(currentItem.reviews.total_rating);
+    currentItem.reviews.total_rating = (currentItem.reviews.total_rating - review.rating) + parseInt(rating);
     let currentReview = await Review.findByIdAndUpdate(reviewId, { body: review_body, rating: rating }, {new: true} )
         .then(data => console.log(data)).catch(err => console.log(err));
+    await currentItem.save();
     req.flash('success', 'Review Successfully Updated!');
 }
 
