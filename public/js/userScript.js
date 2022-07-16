@@ -1,3 +1,4 @@
+
 let allStates =
     [
         'Alabama',
@@ -126,6 +127,47 @@ let allReviewsLow = document.getElementById('all-reviews-low');
 let filterHighBtn = document.getElementById('high');
 let filterLowBtn = document.getElementById('low');
 let cartTotal = document.getElementById('cart-total');
+let itemDescriptionDiv = document.getElementById('item-desc-div');
+let itemDescriptionBtn = document.getElementById('item-desc-btn');
+let itemDescriptionBtnDiv = document.getElementById('item-desc-btn-div');
+let reviews = document.getElementById('customer-eng');
+
+///clicking on product should increase main by a small degree
+////we can send request to a route to call session => interestEngagement
+////interest based on scroll is based on reading reviews so give small degree of interest
+////interest based on item description click gives small amount of interest
+///time spent on page considered disinterested if scroll or click not engaged;
+///maybe call session right before page is changed to save memory
+
+let gaugeTime = async (event) => {
+    setTimeout(async () => {
+        console.log('yesss')
+        await axios({
+            method: 'post',
+            url: `http://localhost:3001/shop/${currentUserId}/${currentCategory}/${currentItemId}/session`,
+            data: {
+                userInterested: true
+            }
+        }).then(data => console.log(data)).catch(err => console.log(err));
+        gaugeTime(event);
+    }, 15000);
+}
+
+let checkScroll = async (event) => {
+    if (event.path[1].scrollY > 250) {
+        console.log('Youve scrolled to reviews');
+        document.removeEventListener('scroll', checkScroll);
+        gaugeTime(event)
+    }
+};
+
+if (itemDescriptionBtn) {
+    document.addEventListener('scroll', checkScroll);
+    itemDescriptionBtn.addEventListener('click', (event) => {
+        itemDescriptionDiv.hidden = false;
+        itemDescriptionBtnDiv.hidden = true;
+    })
+}
 
 
 let getEvent = (event) => {

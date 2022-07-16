@@ -7,10 +7,9 @@ let { ShoppingCartItem, newNotification, userEngage,
 module.exports.renderCategory = async (req, res, next) => {
     let itemCategory = req.originalUrl.split('/')[3];
     let allItems = await Item.find({ 'category.main': itemCategory });
-    console.log(allItems.filter(x => x.reviews.all_reviews.length !== []))
-    let topItems = allItems
-        .sort(function (a, b) { return b.reviews.avg - a.reviews.avg })
-        .slice(0, 8);
+    let topItems = allItems.slice()
+        .sort(function (a, b) { return b.averageRating - a.averageRating })
+        .slice(0, 4);
     res.render('categoryPage', { topItems, allItems })
 }
 

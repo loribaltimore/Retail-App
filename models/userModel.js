@@ -88,39 +88,264 @@ let userSchema = new Schema({
                 ref: 'item'
             }
         ],
+
         interest_by_category: {
             clothing: {
-                type: Number,
-                default: 0
+                main: {
+                    type: Number,
+                    default: 0
+                },
+                sub: {
+                    masc: {
+                        type: Number,
+                        default: 0
+                    },
+                    fem: {
+                        type: Number,
+                        default: 0
+                    },
+                    novelty: {
+                        type: Number,
+                        default: 0
+                    },
+                    vintage: {
+                        type: Number,
+                        default: 0
+                    },
+                    old: {
+                        type: Number,
+                        default: 0
+                    },
+                    new: {
+                        type: Number,
+                        default: 0
+                    },
+                    classic: {
+                        type: Number,
+                        default: 0
+                    },
+                    modern: {
+                        type: Number,
+                        default: 0
+                    },
+
+                }
+                },
+                grocery: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        masc: {
+                            type: Number,
+                            default: 0
+                        },
+                        fem: {
+                            type: Number,
+                            default: 0
+                        },
+                        novelty: {
+                            type: Number,
+                            default: 0
+                        },
+                        vintage: {
+                            type: Number,
+                            default: 0
+                        },
+                        old: {
+                            type: Number,
+                            default: 0
+                        },
+                        new: {
+                            type: Number,
+                            default: 0
+                        },
+                        classic: {
+                            type: Number,
+                            default: 0
+                        },
+                        modern: {
+                            type: Number,
+                            default: 0
+                        },
+    
+                    }
+                },
+                electronics: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        masc: {
+                            type: Number,
+                            default: 0
+                        },
+                        fem: {
+                            type: Number,
+                            default: 0
+                        },
+                        novelty: {
+                            type: Number,
+                            default: 0
+                        },
+                        vintage: {
+                            type: Number,
+                            default: 0
+                        },
+                        old: {
+                            type: Number,
+                            default: 0
+                        },
+                        new: {
+                            type: Number,
+                            default: 0
+                        },
+                        classic: {
+                            type: Number,
+                            default: 0
+                        },
+                        modern: {
+                            type: Number,
+                            default: 0
+                        },
+    
+                    }
+                },
+                toys: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        masc: {
+                            type: Number,
+                            default: 0
+                        },
+                        fem: {
+                            type: Number,
+                            default: 0
+                        },
+                        novelty: {
+                            type: Number,
+                            default: 0
+                        },
+                        vintage: {
+                            type: Number,
+                            default: 0
+                        },
+                        old: {
+                            type: Number,
+                            default: 0
+                        },
+                        new: {
+                            type: Number,
+                            default: 0
+                        },
+                        classic: {
+                            type: Number,
+                            default: 0
+                        },
+                        modern: {
+                            type: Number,
+                            default: 0
+                        },
+    
+                    }
+                },
+                home: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        masc: {
+                            type: Number,
+                            default: 0
+                        },
+                        fem: {
+                            type: Number,
+                            default: 0
+                        },
+                        novelty: {
+                            type: Number,
+                            default: 0
+                        },
+                        vintage: {
+                            type: Number,
+                            default: 0
+                        },
+                        old: {
+                            type: Number,
+                            default: 0
+                        },
+                        new: {
+                            type: Number,
+                            default: 0
+                        },
+                        classic: {
+                            type: Number,
+                            default: 0
+                        },
+                        modern: {
+                            type: Number,
+                            default: 0
+                        },
+    
+                    }
+                },
+                DIY: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        masc: {
+                            type: Number,
+                            default: 0
+                        },
+                        fem: {
+                            type: Number,
+                            default: 0
+                        },
+                        novelty: {
+                            type: Number,
+                            default: 0
+                        },
+                        vintage: {
+                            type: Number,
+                            default: 0
+                        },
+                        old: {
+                            type: Number,
+                            default: 0
+                        },
+                        new: {
+                            type: Number,
+                            default: 0
+                        },
+                        classic: {
+                            type: Number,
+                            default: 0
+                        },
+                        modern: {
+                            type: Number,
+                            default: 0
+                        },
+    
+                    }
+                }
             },
-            gorcery: {
-                type: Number,
-                default: 0
-            },
-            electronics: {
-                type: Number,
-                default: 0
-            },
-            toys: {
-                type: Number,
-                default: 0
-            },
-            home: {
-                type: Number,
-                default: 0
-            },
-            DIY: {
-                type: Number,
-                default: 0
-            }
+            
         },
         reviews: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'review'
             }
-        ]
-    },
+    ],
+        
     notifications: [
         {
             message: {

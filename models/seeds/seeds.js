@@ -18,8 +18,28 @@ let getInfo = async (req, res, next) => {
     let allItems = await Item.find({});
     let allUsers = await User.find({});
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
-    console.log(currentUser);
-}
+    allItems.forEach(async (element, index) => {
+        element.user_engagement.total_interest = 0;
+        await element.save();
+    });
+    let allCats = Object.keys(currentUser.history.interest_by_category);
+    for (let cat of allCats) {
+        currentUser.history.interest_by_category[cat] = {
+            main: 0,
+            sub: {
+                masc: 0,
+                fem: 0,
+                novelty: 0,
+                vintage: 0,
+                old: 0,
+                new: 0,
+                classic: 0,
+                modern: 0,
+            }
+        }
+    }
+    await currentUser.save();
+};
 getInfo();
 let seedUsers = async (req, res, next) => {
     let allUsers = await User.deleteMany({});
@@ -57,14 +77,14 @@ let seedReviews = async (req, res, next) => {
         ///delete all Reviews
     await Review.deleteMany({});
     ///change all item reviews to 0 / 0
-    allItems.forEach(async (element, index) => {
-        element.reviews = { qty: 0, total_rating: 0, all_reviews: [] }
-        await element.save();
-    });
+    // allItems.forEach(async (element, index) => {
+    //     element.reviews = { qty: 0, total_rating: 0, all_reviews: [] }
+    //     await element.save();
+    // });
     ///for each User...
     allUsers.forEach(async (element, index) => {
         ////select a random item...
-       let randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+       let randomItem = allItems[Math.floor(Math.random() * (allItems.length - 1))];
         ////create a review...
         let newReview = await new Review({
             item: randomItem,
@@ -93,22 +113,47 @@ let seedReviews = async (req, res, next) => {
 };
 for (let i = 0; i < 10; i++){
 // seedReviews();
+};
 
+let randomCategory = function (allCategories) {
+    return allCategories[Math.floor(Math.random() * (allCategories.length - 1))];
+};
+
+let randomSubCategories = function (allSubCategories) {
+    let categoryArr = [];
+    for (let i = 0; i < 3; i++) {
+        categoryArr.push(allSubCategories[Math.floor(Math.random() * allSubCategories.length)]);
+    };
+    return categoryArr;
 }
 
-let seedClothing = async (req, res, next) => {
+let seedItems = async (req, res, next) => {
     await Item.deleteMany({});
-    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
-    currentUser.history.created = [];
-    for (let i = 0; i < 20; i++){
+    let allUsers = await User.find({});
+    allUsers.forEach((element, index) => {
+        element.history.reviews = [];
+        element.history.liked = [];
+        element.history.watching = [];
+        element.history.created = [];
+        element.history.interest_by_category.clothing = 0;
+    });
+    let allCategories = ['clothing', 'grocery', 'electronics', 'home', 'DIY', 'toys'];
+    let allSubCategories = ['masc', 'fem', 'novelty', 'vintage', 'old', 'new', 'classic', 'modern'];
+    console.log(randomCategory(allCategories))
+
+    for (let i = 0; i < 75; i++){
+        let randomCat = randomCategory(allCategories);
+        let subCatArr = randomSubCategories(allSubCategories);
+        console.log(randomCat, subCatArr);
+        let currentUser = allUsers[Math.floor(Math.random() * (allUsers.length - 1))];
         let newItem = await new Item({
             name: casual.word,
             category: {
                 catId: mongoose.Types.ObjectId(),
-                main: 'clothing',
-                sub: ['masc', 'new', 'modern']
+                main: randomCat,
+                sub: subCatArr
             },
-            price: 29.95,
+            price: parseFloat(`${casual.integer(from = 5, to = 199)}.99`),
             img: [
                 {
                     path: 'https://res.cloudinary.com/demgmfow6/image/upload/v1647578718/user-photos/waxjanmzemsc7op4yfzp.jpg',
@@ -119,22 +164,18 @@ let seedClothing = async (req, res, next) => {
                         path: 'https://res.cloudinary.com/demgmfow6/image/upload/v1647578718/user-photos/kqgc10nhk5ameyu7tjjd.jpg'
                     }
             ],
-            reviews: {
-                qty: 10,
-                avg: Math.floor(Math.random() * 5)
-            },
             description: casual.sentence,
-            author: '62b1dc6f8f0a7fddbd777a97',
+            author: currentUser.id,
         }).save()
             .then(data => {return data})
             .catch(err => console.log(err));
         currentUser.history.created.push(newItem.id);
+        await currentUser.save();
     }
-   await currentUser.save();
     console.log('Seed Clothes Finished');
 }
 
-// seedClothing();
+// seedItems();
 
 let addImg = async (req, res, next) => {
     let allItems = await Item.find({})
@@ -171,8 +212,17 @@ let locationTest = async () => {
 // locationTest();
 
 
-let test = function () {
-    console.log(salesTaxByState);
-};
 
-// test();
+let interestBycategory = async (req, res, next) => {
+    let currentUser = await User.findByIdAndUpdate('62cade6087fd406e68edfcb2');
+    currentUser.history.interest_by_category = {};
+    await currentUser.save();
+};
+// interestBycategory();
+
+// let removeOldItems = function () {
+//     let allItems = await Item.find({});
+//     allItems.forEach((function (element, index) {
+
+//     }))
+// }

@@ -1,3 +1,8 @@
+<script>
+    let currentUserId = '<%=currentUser.id%>';
+    let currentItemId = '<%=currentItem.id%>'
+    let itemCategory = '<%=currentItem.category.main%>';
+ </script>
 <div class=" container row " >
     <div class="col">
     <div class="row col" id="item-div">
@@ -5,9 +10,17 @@
     <h1 class="display-3 col"><%=currentItem.name%></h1>
         <h1 class="display-6 col" id="item-page-price">$<%=currentItem.price%></h1>
         </div>
-    <div class="row ">
-    <img src="<%=currentItem.img[0].path%>" id="item-page-img" alt="">
-    <p id="item-page-desc"><%=currentItem.description%></p>
+    <div class="row" >
+        <div class="col">
+            <img src="<%=currentItem.img[0].path%>" id="item-page-img" alt="" class="col">
+        </div>
+    <div class="col" id="item-desc-div" hidden>
+        <h4 id="item-desc-header" class="">Item Description</h4>
+        <p id="item-page-desc" class=""><%=currentItem.description%></p>
+    </div>
+    <div class="col" id="item-desc-btn-div">
+        <button class="btn btn-success" id="item-desc-btn">Click for Item Description</button>
+    </div>
     </div>
     </div>
     <div id="customer-eng">

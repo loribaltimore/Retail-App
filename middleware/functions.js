@@ -142,7 +142,7 @@ let addToCart = async (req, res, currentUser, currentItem) => {
         getTotal(req, res, req.session.cart[0]);
     }
     currentItem.user_engagement.total_interest += 1
-    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    currentUser.history.interest_by_category[currentItem.category.main].main += 1;
     console.log(req.session.cart[0]);
     req.flash('success', 'Successfully added to cart')
 };

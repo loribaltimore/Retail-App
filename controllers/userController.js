@@ -3,10 +3,12 @@ let mongoose = require('mongoose');
 const User = require('../models/userModel');
 const { notifyPriceChange, removeFromCart,
     changeQty } = require('../middleware/functions');
+const { session } = require('../middleware/session');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
+
     res.render('home', {currentUser});
 }
 
@@ -75,8 +77,8 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
-
-///finish remove item from cart. Where is that error starting? 
+///is there a better way to bundle session updates to save memory
+///incorporate clicking item desc button into increasing the item and user interest 
 ///create async utility for errorHandling
 ///try to start on a recommendation algorithm
 ///seed your database and user history with categories
@@ -145,3 +147,9 @@ module.exports.userCart = async (req, res, next) => {
             break;
     }
 };
+
+module.exports.callSession = async (req, res, next) => {
+    console.log('call session working')
+    session(req, res, next);
+    res.send('WORKING')
+}

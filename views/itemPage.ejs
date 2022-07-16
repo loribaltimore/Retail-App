@@ -1,8 +1,13 @@
 <script>
     let currentUserId = '<%=currentUser.id%>';
+    </script>
+    <script>
     let currentItemId = '<%=currentItem.id%>'
-    let itemCategory = '<%=currentItem.category.main%>';
- </script>
+</script>
+<script>
+    let currentCategory = '<%=currentItem.category.main%>'
+</script>
+
 <%-layout('./partials/boilerplate.ejs')%>
 
 <%-include('./partials/backBtn')%>
