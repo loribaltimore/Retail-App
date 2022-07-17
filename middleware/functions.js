@@ -103,11 +103,18 @@ const notifyPriceChange = async (currentItem, currentUser) => {
     });
 };
 
+let increaseInterest = function (currentUser, currentItem) {
+    currentItem.user_engagement.total_interest += 1;
+    currentUser.history.interest_by_category[currentItem.category.main].main += 1;
+    for (let cat of currentItem.category.sub) {
+        currentUser.history.interest_by_category[currentItem.category.main].sub[cat] += 1;
+    };
+};
+
 let watchItem = async (req, currentUser, currentItem, itemId) => {
     currentUser.history.watching.push(itemId);
-    currentItem.user_engagement.total_interest += 1;
     currentItem.user_engagement.watched_by.push(currentUser.id);
-    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    increaseInterest(currentUser, currentItem);
     req.flash('success', `Now watching ${currentItem.name}`)
 };
 
@@ -119,9 +126,10 @@ let unwatchItem = async (req, currentUser, currentItem) => {
 
 let likeItem = async (req, currentUser, currentItem, itemId) => {
     currentUser.history.liked.push(itemId);
-    currentItem.user_engagement.total_interest += 1;
     currentItem.user_engagement.liked_by.push(currentUser.id);
-    currentUser.history.interest_by_category[currentItem.category.main] += 1;
+    console.log(currentUser.history.interest_by_category[currentItem.category.main]);
+    increaseInterest(currentUser, currentItem);
+    console.log(currentUser.history.interest_by_category[currentItem.category.main]);
     req.flash('success', `You liked ${currentItem.name}`)
 };
 let unlikeItem = async (req, currentUser, currentItem, itemId) => {
@@ -141,8 +149,7 @@ let addToCart = async (req, res, currentUser, currentItem) => {
         req.session.cart[0].items.push(newCartItem);
         getTotal(req, res, req.session.cart[0]);
     }
-    currentItem.user_engagement.total_interest += 1
-    currentUser.history.interest_by_category[currentItem.category.main].main += 1;
+    increaseInterest(currentUser, currentItem);
     console.log(req.session.cart[0]);
     req.flash('success', 'Successfully added to cart')
 };

@@ -37,7 +37,5 @@ module.exports.session = async (req, res, next) => {
     }
     next();
 
-    ///interested vs non interested screen time
-    ////reduced interest from screen time
-    ////creating web page in such a way as to know difference between interest and on interest
+  
 }
