@@ -77,8 +77,6 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
-///is there a better way to bundle session updates to save memory
-///incorporate clicking item desc button into increasing the item and user interest 
 ///create async utility for errorHandling
 ///try to start on a recommendation algorithm
 ///seed your database and user history with categories
@@ -149,7 +147,33 @@ module.exports.userCart = async (req, res, next) => {
 };
 
 module.exports.callSession = async (req, res, next) => {
-    console.log('call session working')
-    session(req, res, next);
-    res.send('WORKING')
+    let { userInterested, shouldUpdate } = req.body;
+    let { itemId } = req.params;
+    console.log('call session working');
+    if (userInterested) {
+        let currentItemSubs = await Item.findById(itemId).then(data => { return data.category.sub });
+        if (req.session.userInterested === undefined) {
+             console.log('in here')
+            req.session.userInterested = {};
+            req.session.userInterested[itemId] = {main: .1, sub: {}};
+            for (let cat of currentItemSubs) {
+                req.session.userInterested[itemId].sub[cat] = .1
+            };
+        } else if (Object.keys(req.session.userInterested).indexOf(itemId) === -1) {
+            console.log('SHOULDNT BE HERE')
+            req.session.userInterested[itemId].main = .1
+            for (let cat of currentItemSubs) {
+                req.session.userInterested[itemId].sub[cat] = .1
+            };
+        } else {
+            req.session.userInterested[itemId].main += .1;
+            for (let cat of currentItemSubs) {
+                req.session.userInterested[itemId].sub[cat] += .1
+            };
+        };
+        console.log(req.session.userInterested);
+    } else if (shouldUpdate) {
+        session(req, res, next);
+    };
+   return res.send('working')
 }

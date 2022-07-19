@@ -131,85 +131,85 @@ let itemDescriptionDiv = document.getElementById('item-desc-div');
 let itemDescriptionBtn = document.getElementById('item-desc-btn');
 let itemDescriptionBtnDiv = document.getElementById('item-desc-btn-div');
 let reviews = document.getElementById('customer-eng');
-
-///item description
-///every 20 seconds either add amount to a variable OR send request based on mouse movement
-///moving mouse while the alorithm is working
+let allItemsDiv = document.getElementById('featured-panel');
 
 ///clicking on product should increase main by a small degree
 ////we can send request to a route to call session => interestEngagement
-////interest based on scroll is based on reading reviews so give small degree of interest
-////interest based on item description click gives small amount of interest
-///time spent on page considered disinterested if scroll or click not engaged;
 ///maybe call session right before page is changed to save memory
 
-let request = async () => {
+let request = async (shouldUpdate) => {
+    if (shouldUpdate) {
+        data = {
+            shouldUpdate: true
+        }
+    } else {data = {userInterested: true}}
     await axios({
         method: 'post',
         url: `http://localhost:3001/shop/${currentUserId}/${currentCategory}/${currentItemId}/session`,
-        data: {
-            userInterested: true
-        }
+        data
     }).then(data => console.log(data)).catch(err => console.log(err));
+};
 
+if (allItemsDiv) {
+    allItemsDiv.addEventListener('click', (event) => {
+        if (event.target.classList.contains('all-items-div')
+        || event.target.classList.contains('item-information')) {
+            ///add interest to item and user history
+        }
+    });  
+}
+let start = true;
+////get testFn to only trigger every so often instead of it going every time you trigger an event;
+///make sure interest_engagement is updating values appropriately for main and sub;
+
+let testFn = async (event) => {
+    setTimeout(() => {
+        request(true);
+        console.log('TEST FUNCTION GOING OFF')
+        start = true;
+    }, 10000)
 }
 
-let checkMouse = async (event, mouseCoord) => {
+let checkMouse = async (event) => {
+    console.log('MOUSE HAS MOVED');
+    console.log('Increasing interest by an increment of .1');
     document.body.removeEventListener('mousemove', checkMouse);
-    console.log('mouse event')
-    // if (event.pageY !== mouseCoord) {
-    //     request();
-    // } else {
-    //     mouseCoord = event.pageY;
-    // };
-    gaugeTime(event, mouseCoord)
+    window.removeEventListener('scroll', checkMouse);
+    await request()
+    gaugeTime();
+    if (start === true) {
+        start = false;
+        testFn()  
+    };
 };
 
-let scrollCheck = (event, mouseCoord) => {
-    document.removeEventListener('scroll', scrollCheck);
-    console.log('scroll event')
-    // console.log(event.path[1].scrollY)
-    // if (event.path[1].scrollY !== mouseCoord) {
-    //     request();
-    // } else { mouseCoord = event.path[1].scrollY };
-
-};
-
-let mouseCoord = 0;
-
-let clickCheck = async (event) => {
-    console.log(event.pageY);
-    if (mouseCoord === event.pageY) {
-        ////send request or break
-    }
-}
 
 let gaugeTime = async (event, mouseCoord) => {
     console.log('back at gauge')
     setTimeout(async () => {
-        // document.body.addEventListener('mousemove', checkMouse);
-        // document.addEventListener('scroll', scrollCheck);
-        document.body.click();
-        console.log('asssss')
-    }, 2500)
+        console.log('MOUSE MOVE IS SET');
+        window.addEventListener('scroll', checkMouse);
+        document.body.addEventListener('mousemove', checkMouse);
+    }, 2500);
+    
     console.log('IT IS DONE')
 }
 
 let checkScroll = async (event) => {
     if (event.path[1].scrollY > 250) {
-        mouseCoord = event.path[1].scrollY;
         console.log('Youve scrolled to reviews');
-        document.removeEventListener('scroll', checkScroll);
-        gaugeTime(event, mouseCoord);
+        window.removeEventListener('scroll', checkScroll);
+        gaugeTime();
     }
 };
 
 if (itemDescriptionBtn) {
-    document.addEventListener('scroll', checkScroll);
-    document.body.addEventListener('click', clickCheck);
+    window.addEventListener('scroll', checkScroll);
     itemDescriptionBtn.addEventListener('click', (event) => {
         itemDescriptionDiv.hidden = false;
         itemDescriptionBtnDiv.hidden = true;
+        window.removeEventListener('scroll', checkScroll);
+        gaugeTime();
     })
 }
 

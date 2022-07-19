@@ -17,17 +17,17 @@
       <%-include('./partials/featured')%>
       <%allItems.forEach(function (element, index) {%>
         <div class="container row all-items-div mt-2">
-            <div class="row mt-4">
-               <a href="/shop/<%=currentUser.id%>/<%=element.category.main%>/<%=element.id%>"><div class="col">
-                    <h5><%=element.name%></h5>
+            <div class="row mt-4 item-information">
+               <a href="/shop/<%=currentUser.id%>/<%=element.category.main%>/<%=element.id%>" class="item-information"><div class="col">
+                    <h5 class="item-information"><%=element.name%></h5>
                 </div>
                 <div class="col">
-                    <h6><%=element.price%></h6>
+                    <h6 class="item-information"><%=element.price%></h6>
                 </div>
             </a> 
             </div>
-    <img src="<%=element.img[0].path%>" class="all-items-img"   alt="">
-    <p><%=element.description%></p>
+    <img src="<%=element.img[0].path%>" class="all-items-img item-information"   alt="">
+    <p class="item-information"><%=element.description%></p>
         </div>
     <%})%>
     </div>

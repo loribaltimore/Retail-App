@@ -7,35 +7,47 @@ let {ShoppingCart} = require('../middleware/functions')
 
 let interest_engagement = async (req, res, next) => {
     let { userId, itemId } = req.params;
+    console.log('updating database');
     let currentUser = await User.findById(userId);
-    let currentItem = await Item.findById(itemId);
-    let category = currentItem.category.main;
-    console.log(`current Items total interest from ${currentItem.user_engagement.total_interest}`);
-    currentItem.user_engagement.total_interest += .1;
-    console.log(`to ${currentItem.user_engagement.total_interest}`);
-    console.log(`Users interest in ${category} BEFORE ${currentUser.history.interest_by_category[category]}`)
-    currentUser.history.interest_by_category[category].main += .1;
-    for (let cat of currentItem.category.sub) {
-        currentUser.history.interest_by_category[category].sub[cat] += .1
+    for (let itemId in req.session.userInterested) {
+        let currentItem = await Item.findById(itemId);
+        let category = currentItem.category.main;
+        currentItem.user_engagement.total_interest += req.session.userInterested[itemId].main;
+        currentUser.history.interest_by_category[category].main += req.session.userInterested[itemId].main;
+        for (let cat in req.session.userInterested[itemId].sub) {
+            currentUser.history.interest_by_category[category].sub[cat] += req.session.userInterested[itemId].sub[cat];
+        }
     };
-    console.log(`Users interest in ${category} AFTER ${currentUser.history.interest_by_category[category]}`)
-    await currentUser.save();
-    await currentItem.save();
-}
+    
+    
+    // console.log(`current Items total interest from ${currentItem.user_engagement.total_interest}`);
+    // currentItem.user_engagement.total_interest += .1;
+    // console.log(`to ${currentItem.user_engagement.total_interest}`);
+    // console.log(`Users interest in ${category} BEFORE ${currentUser.history.interest_by_category[category]}`)
+    // currentUser.history.interest_by_category[category].main += .1;
+    // for (let cat of currentItem.category.sub) {
+    //     currentUser.history.interest_by_category[category].sub[cat] += .1
+    // };
+    // console.log(`Users interest in ${category} AFTER ${currentUser.history.interest_by_category[category]}`)
+    // await currentUser.save();
+    // await currentItem.save();
+};
+
 
 module.exports.session = async (req, res, next) => {
-    let { userInterested } = req.body;
+    let { shouldUpdate } = req.body;
     if (req.session.cart === undefined) {
         req.session.cart = [];
     } else {};
     req.session.prevUrl = req.session.currentUrl;
     req.session.currentUrl = req.originalUrl;
-    if (userInterested) {
+    if (shouldUpdate) {
         let interest = await interest_engagement(req)
         .then(data => { return data })
         .catch(err => console.log(err));
-    }
+    };
+    console.log(req.session.userInterested);
     next();
-
-  
 }
+
+////req.session will keep the added interest values and every so often will update all the items to save memory
