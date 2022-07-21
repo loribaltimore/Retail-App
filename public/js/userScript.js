@@ -133,16 +133,7 @@ let itemDescriptionBtnDiv = document.getElementById('item-desc-btn-div');
 let reviews = document.getElementById('customer-eng');
 let allItemsDiv = document.getElementById('featured-panel');
 
-///clicking on product should increase main by a small degree
-////we can send request to a route to call session => interestEngagement
-///maybe call session right before page is changed to save memory
-
-let request = async (shouldUpdate) => {
-    if (shouldUpdate) {
-        data = {
-            shouldUpdate: true
-        }
-    } else {data = {userInterested: true}}
+let request = async () => {
     await axios({
         method: 'post',
         url: `http://localhost:3001/shop/${currentUserId}/${currentCategory}/${currentItemId}/session`,
@@ -150,25 +141,6 @@ let request = async (shouldUpdate) => {
     }).then(data => console.log(data)).catch(err => console.log(err));
 };
 
-if (allItemsDiv) {
-    allItemsDiv.addEventListener('click', (event) => {
-        if (event.target.classList.contains('all-items-div')
-        || event.target.classList.contains('item-information')) {
-            ///add interest to item and user history
-        }
-    });  
-}
-let start = true;
-////get testFn to only trigger every so often instead of it going every time you trigger an event;
-///make sure interest_engagement is updating values appropriately for main and sub;
-
-let testFn = async (event) => {
-    setTimeout(() => {
-        request(true);
-        console.log('TEST FUNCTION GOING OFF')
-        start = true;
-    }, 10000)
-}
 
 let checkMouse = async (event) => {
     console.log('MOUSE HAS MOVED');
@@ -177,10 +149,6 @@ let checkMouse = async (event) => {
     window.removeEventListener('scroll', checkMouse);
     await request()
     gaugeTime();
-    if (start === true) {
-        start = false;
-        testFn()  
-    };
 };
 
 
@@ -191,7 +159,6 @@ let gaugeTime = async (event, mouseCoord) => {
         window.addEventListener('scroll', checkMouse);
         document.body.addEventListener('mousemove', checkMouse);
     }, 2500);
-    
     console.log('IT IS DONE')
 }
 

@@ -28,14 +28,15 @@ a{
     max-width: 30rem;
 
 }
-#top-item{
-    max-width: 10rem;
-}
+
 #whats-hot{
     position: relative;
-    left: 15rem;
+   
     top: 1rem;
     margin-bottom: 3rem;
+    max-width: 50rem;
+    height: 20rem;
+    background-color: blue;
 }
 
 

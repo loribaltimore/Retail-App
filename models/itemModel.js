@@ -97,5 +97,6 @@ itemSchema.virtual('averageRating').get(function () {
     return this.reviews.total_rating / this.reviews.qty;
 });
 
+
 let Item = model('item', itemSchema);
 module.exports = Item;

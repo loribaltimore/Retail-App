@@ -2,15 +2,18 @@ let Item = require('../models/itemModel');
 let mongoose = require('mongoose');
 const User = require('../models/userModel');
 const { notifyPriceChange, removeFromCart,
-    changeQty } = require('../middleware/functions');
+    changeQty, getRecommended } = require('../middleware/functions');
 const { session } = require('../middleware/session');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
-
-    res.render('home', {currentUser});
-}
+    let sortedByTop = await getRecommended(req, res, next)
+        .then(data => { return data })
+        .catch(err => console.log(err));
+    
+    res.render('home', { currentUser });
+};
 
 module.exports.renderCreateItem = async (req, res, next) => {
     res.render('createItem')
@@ -149,21 +152,23 @@ module.exports.userCart = async (req, res, next) => {
 module.exports.callSession = async (req, res, next) => {
     let { userInterested, shouldUpdate } = req.body;
     let { itemId } = req.params;
+    ///Setting initial value @ .2 instead of .1 to take the initial choosing of the item into account
+    ///We have .1 for clicking the item, then another once interest is demonstrated;
     console.log('call session working');
     if (userInterested) {
         let currentItemSubs = await Item.findById(itemId).then(data => { return data.category.sub });
         if (req.session.userInterested === undefined) {
              console.log('in here')
             req.session.userInterested = {};
-            req.session.userInterested[itemId] = {main: .1, sub: {}};
+            req.session.userInterested[itemId] = {main: .2, sub: {}};
             for (let cat of currentItemSubs) {
-                req.session.userInterested[itemId].sub[cat] = .1
+                req.session.userInterested[itemId].sub[cat] = .2
             };
         } else if (Object.keys(req.session.userInterested).indexOf(itemId) === -1) {
             console.log('SHOULDNT BE HERE')
-            req.session.userInterested[itemId].main = .1
+            req.session.userInterested[itemId].main = .2
             for (let cat of currentItemSubs) {
-                req.session.userInterested[itemId].sub[cat] = .1
+                req.session.userInterested[itemId].sub[cat] = .2
             };
         } else {
             req.session.userInterested[itemId].main += .1;
@@ -171,7 +176,6 @@ module.exports.callSession = async (req, res, next) => {
                 req.session.userInterested[itemId].sub[cat] += .1
             };
         };
-        console.log(req.session.userInterested);
     } else if (shouldUpdate) {
         session(req, res, next);
     };

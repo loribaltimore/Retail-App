@@ -1,7 +1,7 @@
-<div class="container row" id="whats-hot">
-    <div id="carouselExampleIndicators" class="carousel slide car-img" data-bs-ride="true">
+<div class="container row" id="recommended">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
         <div class="carousel-inner all-items-img">
-          <%topItems.forEach(function (element, index){%>
+          <%recommended.forEach(function (element, index){%>
            <% if (index === 0){%>
                <a href="/shop/<%=element.category.main%>/item/<%=element.id%>">
                 <div class="carousel-item active text-center car-img">

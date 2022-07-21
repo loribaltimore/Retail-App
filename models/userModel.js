@@ -388,6 +388,15 @@ userSchema.virtual('topCategory').get(function () {
     }).sort((a, b) => a - b);
 });
 
+userSchema.virtual('sortedSubs').get(function (mainCat) {
+    let currentUser = this;
+    let allSubs = Object.keys(this.history.interest_by_category[mainCat].sub);
+    return allSubs.sort(function (a, b) {
+        return this.history.interest_by_category[mainCat].sub[a]
+            - this.history.interest_by_category[mainCat].sub[b];
+    });
+})
+
 userSchema.method('deleteNotification', function (notifId) {
     this.notifications.pull({ _id: notifId });
     this.save();

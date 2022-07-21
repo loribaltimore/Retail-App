@@ -40,7 +40,7 @@ let getInfo = async (req, res, next) => {
     }
     await currentUser.save();
 };
-getInfo();
+// getInfo();
 let seedUsers = async (req, res, next) => {
     let allUsers = await User.deleteMany({});
     for (let i = 0; i < 50; i++){
@@ -118,30 +118,46 @@ for (let i = 0; i < 10; i++){
 let randomCategory = function (allCategories) {
     return allCategories[Math.floor(Math.random() * (allCategories.length - 1))];
 };
+// enum: ['masc', 'fem', 'novelty', 'vintage', 'old', 'new', 'classic', 'modern'],
+let fiftyfifty = function () {
+    let random = Math.floor(Math.random() * 10)
+    if (random <= 5) {
+        return 0
+    } else {
+       return 1
+    }
+};
 
 let randomSubCategories = function (allSubCategories) {
     let categoryArr = [];
-    for (let i = 0; i < 3; i++) {
-        categoryArr.push(allSubCategories[Math.floor(Math.random() * allSubCategories.length)]);
+    let subCatBreakdown = {
+        gender: ['masc', 'fem'],
+        age: ['old', 'new'],
+        taste: ['modern', 'vintage'],
+        niche: ['novelty', 'classic'],
     };
+    for (let el in subCatBreakdown) {
+        let num = fiftyfifty();
+        console.log(num)
+        categoryArr.push(subCatBreakdown[el][num]);
+    }
     return categoryArr;
 }
 
 let seedItems = async (req, res, next) => {
     await Item.deleteMany({});
+    let allItems = await Item.find({});
     let allUsers = await User.find({});
     allUsers.forEach((element, index) => {
         element.history.reviews = [];
         element.history.liked = [];
         element.history.watching = [];
         element.history.created = [];
-        element.history.interest_by_category.clothing = 0;
     });
     let allCategories = ['clothing', 'grocery', 'electronics', 'home', 'DIY', 'toys'];
     let allSubCategories = ['masc', 'fem', 'novelty', 'vintage', 'old', 'new', 'classic', 'modern'];
-    console.log(randomCategory(allCategories))
-
-    for (let i = 0; i < 75; i++){
+    for (let i = 0; i < 1000; i++){
+        console.log('back at the top')
         let randomCat = randomCategory(allCategories);
         let subCatArr = randomSubCategories(allSubCategories);
         console.log(randomCat, subCatArr);
@@ -169,8 +185,10 @@ let seedItems = async (req, res, next) => {
         }).save()
             .then(data => {return data})
             .catch(err => console.log(err));
+        console.log(newItem.id)
         currentUser.history.created.push(newItem.id);
         await currentUser.save();
+        console.log('all the way at the bottom')
     }
     console.log('Seed Clothes Finished');
 }
@@ -226,3 +244,23 @@ let interestBycategory = async (req, res, next) => {
 
 //     }))
 // }
+
+let random = function () {
+    return Math.floor(Math.random() * 50);
+}
+let seedInterest = async (req, res, next) => {
+    let allUsers = await User.find({});
+    for (let currentUser of allUsers) {
+        let allCats = Object.keys(currentUser.history.interest_by_category);
+        for (let cat of allCats) {
+            currentUser.history.interest_by_category[cat].main = random();
+            let allSubs = Object.keys(currentUser.history.interest_by_category[cat].sub);
+            allSubs.forEach(function (element, index) {
+                currentUser.history.interest_by_category[cat].sub[element] = random();
+            });
+        }
+        await currentUser.save();
+    }
+   
+}
+// seedInterest();

@@ -1,5 +1,6 @@
 let Item = require('../models/itemModel');
 let Review = require('../models/reviewModel');
+let User = require('../models/userModel');
 let mongoose = require('mongoose');
 let baseClient = require('@mapbox/mapbox-sdk/services/geocoding');
 const { transformAuthInfo } = require('passport');
@@ -280,11 +281,80 @@ let fetchLocationData = async (req, res, next) => {
     }).send()
         .then(data => { return data.body.features[0].geometry }).catch(err => console.log(err));
     return res.send(info)
+};
+
+let getRecommended = async (req, res, next) => {
+    let { userId } = req.params;
+    let currentUser = await User.findById(userId);
+    let sortedUserCats = {};
+    let subCatsTopThree = [];
+    let mainCats = Object.keys(currentUser.history.interest_by_category);
+    let sortedCats = mainCats.sort((a, b) => currentUser.history.interest_by_category[b].main
+            - currentUser.history.interest_by_category[a].main);
+    for (let cat of sortedCats) {
+        sortedUserCats[cat] = { main: currentUser.history.interest_by_category[cat].main };
+        let allSubs = Object.keys(currentUser.history.interest_by_category[cat].sub);
+        let sortedSubs = allSubs.sort((a, b) => currentUser.history.interest_by_category[cat].sub[b]
+            - currentUser.history.interest_by_category[cat].sub[a]);
+        // subCatsTopThree.push([cat, sortedSubs.slice(0, 3)]);
+        sortedSubs.forEach(function (element, index) {
+            sortedUserCats[cat][element] = currentUser.history.interest_by_category[cat].sub[element];
+        })
+    };
+    // console.log(subCatsTopThree);
+    // console.log(sortedUserCats);
+    ///split into separate function 
+    let allItems = await Item.find({});
+    let topThree = allItems.filter(function (element, index) {
+        if (Object.keys(currentUser.history.interest_by_category)
+            .slice(0, 4).indexOf(element.category.main) > -1) {
+            return element
+        }
+    });
+///This block should filter all items in topThree that have all three of the top three subs from the items
+    ///main category in the sub category index
+    ///I will user a frequency counter to verify that they're all there for practice
+    let testObj = {};
+    let testFilter = topThree.filter(function (element, index) {
+        ////do these elements sub cats occur once in topThreeSubCats where subCatsTopThree[0] === element.main
+        let counter1 = {};
+        let counter2 = {};
+        for (let cat of element.category.sub) {
+            counter1[cat] = (counter1[cat] || 0) + 1;
+        }
+        for (let cat of Object.keys(sortedUserCats[element.category.main]).slice(1, 4)) {
+            counter2[cat] = (counter2[cat] || 0) + 1;
+        };
+        for (let val in counter1) {
+            if (!counter2[val]) {
+                break;
+            };
+        }
+        return element
+    });
+    console.log(testFilter);
+
+    ///verify that testFilter is truly getting ONLY items with the same sub categories as the topThreeSubCats
+    ///need most popular subCats across main cats
+    ///need most popular subCat for each main cat
+
+    ////working on tying the sorted information in testObj ^^^ into the items we want to recommend;
+    ////how to sort the items based on top main and then top sub. Do we recommed lower rated top mains
+    ////with higher subs if top sub is higher?
+    ///extrapolate highest subs in general and recommend based on that. 
+    ///recommendation based on top main w/ similar subs to top subs => lower main with matching top subs => 
+    ///=> recommend based on top subs only 
+    ////what if we had user interaction increment sub values in the item itself.
+    ///That way we can even BETTER recommend items, because two items may be different but have similar
+    ///sub categories. ///This way we can see the precise mix of them.
+    ///This could be incremented by asking customers to sort items themselves in exchange for a reward 
+    return ''
 }
+
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
     addReview, deleteReview, editReview, fetchLocationData, ShoppingCart,
-    changeQty, removeFromCart
+    changeQty, removeFromCart, getRecommended
 };

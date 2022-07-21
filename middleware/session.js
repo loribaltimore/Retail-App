@@ -12,36 +12,30 @@ let interest_engagement = async (req, res, next) => {
     for (let itemId in req.session.userInterested) {
         let currentItem = await Item.findById(itemId);
         let category = currentItem.category.main;
+        console.log(`current Items total interest from ${currentItem.user_engagement.total_interest}`);
         currentItem.user_engagement.total_interest += req.session.userInterested[itemId].main;
+            console.log(`to ${currentItem.user_engagement.total_interest}`);
+    console.log(`Users interest in ${category} BEFORE ${currentUser.history.interest_by_category[category]}`)
+
         currentUser.history.interest_by_category[category].main += req.session.userInterested[itemId].main;
+       
         for (let cat in req.session.userInterested[itemId].sub) {
             currentUser.history.interest_by_category[category].sub[cat] += req.session.userInterested[itemId].sub[cat];
         }
+        console.log(`Users interest in ${category} AFTER ${currentUser.history.interest_by_category[category]}`);
+    await currentItem.save();
     };
-    
-    
-    // console.log(`current Items total interest from ${currentItem.user_engagement.total_interest}`);
-    // currentItem.user_engagement.total_interest += .1;
-    // console.log(`to ${currentItem.user_engagement.total_interest}`);
-    // console.log(`Users interest in ${category} BEFORE ${currentUser.history.interest_by_category[category]}`)
-    // currentUser.history.interest_by_category[category].main += .1;
-    // for (let cat of currentItem.category.sub) {
-    //     currentUser.history.interest_by_category[category].sub[cat] += .1
-    // };
-    // console.log(`Users interest in ${category} AFTER ${currentUser.history.interest_by_category[category]}`)
-    // await currentUser.save();
-    // await currentItem.save();
+    await currentUser.save();
 };
 
 
 module.exports.session = async (req, res, next) => {
-    let { shouldUpdate } = req.body;
     if (req.session.cart === undefined) {
         req.session.cart = [];
     } else {};
     req.session.prevUrl = req.session.currentUrl;
     req.session.currentUrl = req.originalUrl;
-    if (shouldUpdate) {
+    if (req.session.prevUrl !== req.session.currentUrl) {
         let interest = await interest_engagement(req)
         .then(data => { return data })
         .catch(err => console.log(err));
@@ -49,5 +43,3 @@ module.exports.session = async (req, res, next) => {
     console.log(req.session.userInterested);
     next();
 }
-
-////req.session will keep the added interest values and every so often will update all the items to save memory
