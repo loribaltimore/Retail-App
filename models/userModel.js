@@ -96,47 +96,7 @@ let userSchema = new Schema({
                     default: 0
                 },
                 sub: {
-                    masc: {
-                        type: Number,
-                        default: 0
-                    },
-                    fem: {
-                        type: Number,
-                        default: 0
-                    },
-                    novelty: {
-                        type: Number,
-                        default: 0
-                    },
-                    vintage: {
-                        type: Number,
-                        default: 0
-                    },
-                    old: {
-                        type: Number,
-                        default: 0
-                    },
-                    new: {
-                        type: Number,
-                        default: 0
-                    },
-                    classic: {
-                        type: Number,
-                        default: 0
-                    },
-                    modern: {
-                        type: Number,
-                        default: 0
-                    },
-
-                }
-                },
-                grocery: {
-                    main: {
-                        type: Number,
-                        default: 0
-                    },
-                    sub: {
+                    gender: {
                         masc: {
                             type: Number,
                             default: 0
@@ -145,7 +105,13 @@ let userSchema = new Schema({
                             type: Number,
                             default: 0
                         },
-                        novelty: {
+                        top: {
+                            type: String,
+                            enum: ['masc', 'fem']
+                        }
+                    },
+                    taste: {
+                        modern: {
                             type: Number,
                             default: 0
                         },
@@ -153,6 +119,12 @@ let userSchema = new Schema({
                             type: Number,
                             default: 0
                         },
+                        top: {
+                            type: String,
+                            enum: ['modern', 'vintage']
+                        }
+                    },
+                    age: {
                         old: {
                             type: Number,
                             default: 0
@@ -161,15 +133,89 @@ let userSchema = new Schema({
                             type: Number,
                             default: 0
                         },
+                        top: {
+                            type: String,
+                            enum: ['old', 'new']
+                        }
+                    },
+                    niche: {
                         classic: {
                             type: Number,
                             default: 0
                         },
-                        modern: {
+                        novelty: {
                             type: Number,
                             default: 0
                         },
-    
+                        top: {
+                            type: String,
+                            enum: ['classic', 'novelty']
+                        }
+                   },
+                }
+            },
+                grocery: {
+                    main: {
+                        type: Number,
+                        default: 0
+                    },
+                    sub: {
+                        gender: {
+                            masc: {
+                                type: Number,
+                                default: 0
+                            },
+                            fem: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['masc', 'fem']
+                            }
+                        },
+                        taste: {
+                            modern: {
+                                type: Number,
+                                default: 0
+                            },
+                            vintage: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['modern', 'vintage']
+                            }
+                        },
+                        age: {
+                            old: {
+                                type: Number,
+                                default: 0
+                            },
+                            new: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['old', 'new']
+                            }
+                        },
+                        niche: {
+                            classic: {
+                                type: Number,
+                                default: 0
+                            },
+                            novelty: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['classic', 'novelty']
+                            }
+                       },
                     }
                 },
                 electronics: {
@@ -178,39 +224,62 @@ let userSchema = new Schema({
                         default: 0
                     },
                     sub: {
-                        masc: {
-                            type: Number,
-                            default: 0
+                        gender: {
+                            masc: {
+                                type: Number,
+                                default: 0
+                            },
+                            fem: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['masc', 'fem']
+                            }
                         },
-                        fem: {
-                            type: Number,
-                            default: 0
+                        taste: {
+                            modern: {
+                                type: Number,
+                                default: 0
+                            },
+                            vintage: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['modern', 'vintage']
+                            }
                         },
-                        novelty: {
-                            type: Number,
-                            default: 0
+                        age: {
+                            old: {
+                                type: Number,
+                                default: 0
+                            },
+                            new: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['old', 'new']
+                            }
                         },
-                        vintage: {
-                            type: Number,
-                            default: 0
-                        },
-                        old: {
-                            type: Number,
-                            default: 0
-                        },
-                        new: {
-                            type: Number,
-                            default: 0
-                        },
-                        classic: {
-                            type: Number,
-                            default: 0
-                        },
-                        modern: {
-                            type: Number,
-                            default: 0
-                        },
-    
+                        niche: {
+                            classic: {
+                                type: Number,
+                                default: 0
+                            },
+                            novelty: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['classic', 'novelty']
+                            }
+                       },
                     }
                 },
                 toys: {
@@ -219,39 +288,46 @@ let userSchema = new Schema({
                         default: 0
                     },
                     sub: {
-                        masc: {
-                            type: Number,
-                            default: 0
+                        gender: {
+                            masc: {
+                                type: Number,
+                                default: 0
+                            },
+                            fem: {
+                                type: Number,
+                                default: 0
+                            },
                         },
-                        fem: {
-                            type: Number,
-                            default: 0
+                        taste: {
+                            modern: {
+                                type: Number,
+                                default: 0
+                            },
+                            vintage: {
+                                type: Number,
+                                default: 0
+                            },
                         },
-                        novelty: {
-                            type: Number,
-                            default: 0
+                        age: {
+                            old: {
+                                type: Number,
+                                default: 0
+                            },
+                            new: {
+                                type: Number,
+                                default: 0
+                            },
                         },
-                        vintage: {
-                            type: Number,
-                            default: 0
-                        },
-                        old: {
-                            type: Number,
-                            default: 0
-                        },
-                        new: {
-                            type: Number,
-                            default: 0
-                        },
-                        classic: {
-                            type: Number,
-                            default: 0
-                        },
-                        modern: {
-                            type: Number,
-                            default: 0
-                        },
-    
+                        niche: {
+                            classic: {
+                                type: Number,
+                                default: 0
+                            },
+                            novelty: {
+                                type: Number,
+                                default: 0
+                            },
+                       },
                     }
                 },
                 home: {
@@ -260,39 +336,62 @@ let userSchema = new Schema({
                         default: 0
                     },
                     sub: {
-                        masc: {
-                            type: Number,
-                            default: 0
+                        gender: {
+                            masc: {
+                                type: Number,
+                                default: 0
+                            },
+                            fem: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['masc', 'fem']
+                            }
                         },
-                        fem: {
-                            type: Number,
-                            default: 0
+                        taste: {
+                            modern: {
+                                type: Number,
+                                default: 0
+                            },
+                            vintage: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['modern', 'vintage']
+                            }
                         },
-                        novelty: {
-                            type: Number,
-                            default: 0
+                        age: {
+                            old: {
+                                type: Number,
+                                default: 0
+                            },
+                            new: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['old', 'new']
+                            }
                         },
-                        vintage: {
-                            type: Number,
-                            default: 0
-                        },
-                        old: {
-                            type: Number,
-                            default: 0
-                        },
-                        new: {
-                            type: Number,
-                            default: 0
-                        },
-                        classic: {
-                            type: Number,
-                            default: 0
-                        },
-                        modern: {
-                            type: Number,
-                            default: 0
-                        },
-    
+                        niche: {
+                            classic: {
+                                type: Number,
+                                default: 0
+                            },
+                            novelty: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['classic', 'novelty']
+                            }
+                       },
                     }
                 },
                 DIY: {
@@ -301,50 +400,73 @@ let userSchema = new Schema({
                         default: 0
                     },
                     sub: {
-                        masc: {
-                            type: Number,
-                            default: 0
+                        gender: {
+                            masc: {
+                                type: Number,
+                                default: 0
+                            },
+                            fem: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['masc', 'fem']
+                            }
                         },
-                        fem: {
-                            type: Number,
-                            default: 0
+                        taste: {
+                            modern: {
+                                type: Number,
+                                default: 0
+                            },
+                            vintage: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['modern', 'vintage']
+                            }
                         },
-                        novelty: {
-                            type: Number,
-                            default: 0
+                        age: {
+                            old: {
+                                type: Number,
+                                default: 0
+                            },
+                            new: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['old', 'new']
+                            }
                         },
-                        vintage: {
-                            type: Number,
-                            default: 0
-                        },
-                        old: {
-                            type: Number,
-                            default: 0
-                        },
-                        new: {
-                            type: Number,
-                            default: 0
-                        },
-                        classic: {
-                            type: Number,
-                            default: 0
-                        },
-                        modern: {
-                            type: Number,
-                            default: 0
-                        },
-    
+                        niche: {
+                            classic: {
+                                type: Number,
+                                default: 0
+                            },
+                            novelty: {
+                                type: Number,
+                                default: 0
+                            },
+                            top: {
+                                type: String,
+                                enum: ['classic', 'novelty']
+                            }
+                       },
                     }
                 }
             },
-            
+            reviews: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'review'
+                }
+        ],
         },
-        reviews: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'review'
-            }
-    ],
+        
         
     notifications: [
         {
@@ -395,6 +517,28 @@ userSchema.virtual('sortedSubs').get(function (mainCat) {
         return this.history.interest_by_category[mainCat].sub[a]
             - this.history.interest_by_category[mainCat].sub[b];
     });
+});
+
+userSchema.method('topSubs', function (category) {
+    let currentUser = this;
+    let testArr = [];
+    for (let subValue of Object.keys(currentUser.history.interest_by_category[category].sub)) {
+        let allSubVals = Object.keys(this.history.interest_by_category[category].sub[subValue])
+        .filter(x => x !== 'top');
+    if (this.history.interest_by_category[category].sub[subValue][allSubVals[0]]
+        > this.history.interest_by_category[category].sub[subValue][allSubVals[1]]) {
+        testArr.push(allSubVals[0]) 
+    } else {testArr.push(allSubVals[1])}
+    }
+    return testArr;
+});
+
+userSchema.method('topCategories', function () {
+    let currentUser = this;
+    return Object.keys(currentUser.history.interest_by_category).sort(function (a, b) {
+        return currentUser.history.interest_by_category[b].main - currentUser.history.interest_by_category[a].main
+    });
+
 })
 
 userSchema.method('deleteNotification', function (notifId) {

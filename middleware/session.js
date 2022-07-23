@@ -35,11 +35,11 @@ module.exports.session = async (req, res, next) => {
     } else {};
     req.session.prevUrl = req.session.currentUrl;
     req.session.currentUrl = req.originalUrl;
-    if (req.session.prevUrl !== req.session.currentUrl) {
+    if (req.session.prevUrl !== req.session.currentUrl
+    && req.session.userInterested) {
         let interest = await interest_engagement(req)
         .then(data => { return data })
         .catch(err => console.log(err));
     };
-    console.log(req.session.userInterested);
     next();
 }

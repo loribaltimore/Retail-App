@@ -242,6 +242,7 @@ let addReview = async (req, currentUser, currentItem) => {
     }).save()
         .then(data => { return data })
         .catch(err => console.log(err));
+    console.log(currentUser.history)
     currentUser.history.reviews.push(newReview._id);
     currentItem.reviews.all_reviews.push(newReview._id);
     currentItem.reviews.qty += 1;
@@ -286,59 +287,74 @@ let fetchLocationData = async (req, res, next) => {
 let getRecommended = async (req, res, next) => {
     let { userId } = req.params;
     let currentUser = await User.findById(userId);
-    let sortedUserCats = {};
-    let subCatsTopThree = [];
-    let mainCats = Object.keys(currentUser.history.interest_by_category);
-    let sortedCats = mainCats.sort((a, b) => currentUser.history.interest_by_category[b].main
-            - currentUser.history.interest_by_category[a].main);
-    for (let cat of sortedCats) {
-        sortedUserCats[cat] = { main: currentUser.history.interest_by_category[cat].main };
-        let allSubs = Object.keys(currentUser.history.interest_by_category[cat].sub);
-        let sortedSubs = allSubs.sort((a, b) => currentUser.history.interest_by_category[cat].sub[b]
-            - currentUser.history.interest_by_category[cat].sub[a]);
-        // subCatsTopThree.push([cat, sortedSubs.slice(0, 3)]);
-        sortedSubs.forEach(function (element, index) {
-            sortedUserCats[cat][element] = currentUser.history.interest_by_category[cat].sub[element];
-        })
-    };
-    // console.log(subCatsTopThree);
-    // console.log(sortedUserCats);
-    ///split into separate function 
+    let sortedCategoriesMain = currentUser.topCategories().slice(0, 3);
+    console.log('Top Categories');
+    console.log(sortedCategoriesMain);
+
     let allItems = await Item.find({});
     let topThree = allItems.filter(function (element, index) {
-        if (Object.keys(currentUser.history.interest_by_category)
-            .slice(0, 4).indexOf(element.category.main) > -1) {
+        if (sortedCategoriesMain.indexOf(element.category.main) > -1) {
             return element
         }
     });
+    // console.log(sortedUserCats);
+    // console.log(topThree.map(x => x.category.main));
+
 ///This block should filter all items in topThree that have all three of the top three subs from the items
     ///main category in the sub category index
     ///I will user a frequency counter to verify that they're all there for practice
-    let testObj = {};
-    let testFilter = topThree.filter(function (element, index) {
+    let topResults = topThree.filter(function (element, index) {
         ////do these elements sub cats occur once in topThreeSubCats where subCatsTopThree[0] === element.main
-        let counter1 = {};
-        let counter2 = {};
-        for (let cat of element.category.sub) {
-            counter1[cat] = (counter1[cat] || 0) + 1;
-        }
-        for (let cat of Object.keys(sortedUserCats[element.category.main]).slice(1, 4)) {
-            counter2[cat] = (counter2[cat] || 0) + 1;
-        };
-        for (let val in counter1) {
-            if (!counter2[val]) {
-                break;
+        if (element.averageRating >= 3) {
+            let counter1 = {};
+            let counter2 = {};
+            console.log(Object.keys(element.category.sub))
+            for (let cat of Object.keys(element.category.sub)) { //////iterate through the elements sub cats to determine whats there
+                counter1[element.category.sub[cat]] = (counter1[element.category.sub[cat]] || 0) + 1;
+            }
+            for (let cat of currentUser.topSubs(element.category.main)) {
+                counter2[cat] = (counter2[cat] || 0) + 1;
             };
-        }
-        return element
+            console.log(counter1); /// actual item
+            console.log(counter2); /// top three
+            let counter3 = 0;
+            
+            for (let val in counter2) {
+                if (counter3 >= 0) {
+                    console.log('Main category')
+                    console.log(element.category.main);
+                    console.log('Sub categories top three');
+                    console.log(currentUser.topSubs(element.category.main));
+                    console.log('is this value that is in this object in the top three?')
+                    if (counter1[val] !== undefined) {
+                        console.log('yes')
+                        console.log('value is')
+                        console.log(val)
+                        counter3 += 1;
+                        if (counter3 === 3) {
+                            return element;
+                        }
+                    } else {
+                        console.log('no it is not');
+                        console.log(val);
+                        counter3 = -1;
+                    }
+                };
+                if (counter3 < 0) {
+                    break;
+                }
+            };
+            counter3 = 0;
+        };
     });
-    console.log(testFilter);
-
-    ///verify that testFilter is truly getting ONLY items with the same sub categories as the topThreeSubCats
+   ///need to add topValue in each sub value when updating subs from session;
+    ///need to update item model to further categorize the subs, to prevent conflicting values from
+    ///popping up in top3
     ///need most popular subCats across main cats
     ///need most popular subCat for each main cat
+    ///pull age and gender from each customer to inform item demographic
+    ///update create item to account for new sub category system
 
-    ////working on tying the sorted information in testObj ^^^ into the items we want to recommend;
     ////how to sort the items based on top main and then top sub. Do we recommed lower rated top mains
     ////with higher subs if top sub is higher?
     ///extrapolate highest subs in general and recommend based on that. 
@@ -347,8 +363,8 @@ let getRecommended = async (req, res, next) => {
     ////what if we had user interaction increment sub values in the item itself.
     ///That way we can even BETTER recommend items, because two items may be different but have similar
     ///sub categories. ///This way we can see the precise mix of them.
-    ///This could be incremented by asking customers to sort items themselves in exchange for a reward 
-    return ''
+    ///This could be incremented by asking customers to sort items themselves in exchange for a reward;
+    return topResults;
 }
 
 

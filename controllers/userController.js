@@ -8,11 +8,10 @@ let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
-    let sortedByTop = await getRecommended(req, res, next)
+    let recommended = await getRecommended(req, res, next)
         .then(data => { return data })
         .catch(err => console.log(err));
-    
-    res.render('home', { currentUser });
+    res.render('home', { currentUser, recommended });
 };
 
 module.exports.renderCreateItem = async (req, res, next) => {

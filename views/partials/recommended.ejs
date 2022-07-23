@@ -1,21 +1,28 @@
 <div class="container row" id="recommended">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
-        <div class="carousel-inner all-items-img">
+        <div class="carousel-inner featured">
           <%recommended.forEach(function (element, index){%>
+            
            <% if (index === 0){%>
-               <a href="/shop/<%=element.category.main%>/item/<%=element.id%>">
-                <div class="carousel-item active text-center car-img">
+            <a href="/shop/<%=currentUser.id%>/<%=element.category.main%>/<%=element.id%>">
+                <div class="carousel-item active text-center featured">
                     <div class="row"><h5 class="col"><%=element.name%></h5> 
                         <h5 class="col top-item-price">$<%=element.price%></h5>
                 </div>
-            </a>
-                    <img src="<%=element.img[0].path%>" class="d-block w-100 car-img" alt="...">
+                </a>
+                    <img src="<%=element.img[0].path%>" class="d-block w-100" alt="...">
                     <p class="top-item-description"><%=element.description%></p>
+                    <span class="row ">
+                        <h6>Average Rating:</h6>
+                        <p><% for (let i = 0; i < element.averageRating; i++){%>
+                            &starf;
+                            <%}%></p>
+                    </span>
                   </div>
               
             <%} else {%>
-                <a href="/shop/<%=element.category.main%>/item/<%=element.id%>">
-                <div class="carousel-item text-center">
+                <a href="/shop/<%=currentUser.id%>/<%=element.category.main%>/<%=element.id%>">
+                    <div class="carousel-item text-center">
                     <div class="row"><h5 class="col"><%=element.name%></h5> 
                         <h5 class="col top-item-price">$<%=element.price%></h5>
                 </div>
@@ -23,6 +30,12 @@
                     <img src="<%=element.img[0].path%>" class="d-block w-100 " alt="...">
                     <div>
                         <p class="col top-item-price"><%=element.description%></p>
+                        <span class="row ">
+                            <h6>Average Rating:</h6>
+                            <p><% for (let i = 0; i < element.averageRating; i++){%>
+                                &starf;
+                                <%}%></p>
+                        </span>
                     </div>
                   </div>
                   <%}%>

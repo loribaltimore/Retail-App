@@ -10,6 +10,10 @@
             <a href="/shop/<%=currentUser.id%>/toys">Toys</a>
         </div>
     </div>
-    <div class="col border panel" id="featured-panel"></div>
+    <div class="col border panel" id="featured-panel">
+        <h5 class="display-6">Hey <%=currentUser.bio.name%>,</h5>
+        <h5 class="display-5">we think you'll like these products</h5>
+        <%-include('./partials/recommended')%>
+    </div>
     <%-include('./partials/itemUserPanel')%>
 </div>

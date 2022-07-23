@@ -17,17 +17,31 @@ let itemSchema = new Schema({
             enum: ['clothing', 'grocery', 'home', 'electronics', 'DIY', 'toys'],
             required: true
         },
-        sub: [
-            {
+        sub: {
+            gender: {
                 type: String,
-                enum: ['masc', 'fem', 'novelty', 'vintage', 'old', 'new', 'classic', 'modern'],
+                enum: ['masc', 'fem'],
+                required: true
+            },
+            age: {
+                type: String,
+                enum: ['old', 'new'],
+                required: true
+            },
+            taste: {
+                type: String,
+                enum: ['modern', 'vintage'],
+               required: true
+            },
+            niche: {
+                type: String,
+                enum: ['novelty', 'classic'],
                 required: true
             }
-        ],
+        },
         connections: [
             {
-                type: mongoose.Types.ObjectId,
-                
+                type: mongoose.Types.ObjectId,  
             }
         ]
     },
@@ -94,8 +108,10 @@ let itemSchema = new Schema({
 });
 
 itemSchema.virtual('averageRating').get(function () {
-    return this.reviews.total_rating / this.reviews.qty;
+    let currentItem = this;
+    return currentItem.reviews.total_rating / currentItem.reviews.qty;
 });
+
 
 
 let Item = model('item', itemSchema);
