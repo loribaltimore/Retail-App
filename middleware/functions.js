@@ -288,8 +288,12 @@ let getRecommended = async (req, res, next) => {
     let { userId } = req.params;
     let currentUser = await User.findById(userId);
     let sortedCategoriesMain = currentUser.topCategories().slice(0, 3);
+    console.log(currentUser.history.interest_by_category);
+    console.log('Clothing');
+    console.log(currentUser.history.interest_by_category.clothing);
     console.log('Top Categories');
     console.log(sortedCategoriesMain);
+    let testArr = [];
 
     let allItems = await Item.find({});
     let topThree = allItems.filter(function (element, index) {
@@ -308,35 +312,39 @@ let getRecommended = async (req, res, next) => {
         if (element.averageRating >= 3) {
             let counter1 = {};
             let counter2 = {};
-            console.log(Object.keys(element.category.sub))
-            for (let cat of Object.keys(element.category.sub)) { //////iterate through the elements sub cats to determine whats there
+            for (let cat of Object.keys(element.category.sub)) {
                 counter1[element.category.sub[cat]] = (counter1[element.category.sub[cat]] || 0) + 1;
-            }
+               
+            };
+            testArr.push(element.category.main);
             for (let cat of currentUser.topSubs(element.category.main)) {
                 counter2[cat] = (counter2[cat] || 0) + 1;
+                testArr.push(cat)
             };
-            console.log(counter1); /// actual item
-            console.log(counter2); /// top three
+            // console.log('Counter 1 // Elements sub categories')
+            // console.log(counter1); /// actual item
+            // console.log(`Counter 2 // Top Categories in ${element.category.main}`)
+            // console.log(counter2); /// top three
             let counter3 = 0;
             
             for (let val in counter2) {
                 if (counter3 >= 0) {
-                    console.log('Main category')
-                    console.log(element.category.main);
-                    console.log('Sub categories top three');
-                    console.log(currentUser.topSubs(element.category.main));
-                    console.log('is this value that is in this object in the top three?')
+                    // console.log('Main category')
+                    // console.log(element.category.main);
+                    // console.log('Sub categories top three');
+                    // console.log(currentUser.topSubs(element.category.main));
+                    // console.log('is this value that is in this object in the top three?')
                     if (counter1[val] !== undefined) {
-                        console.log('yes')
-                        console.log('value is')
-                        console.log(val)
+                        // console.log('yes')
+                        // console.log('value is')
+                        // console.log(val)
                         counter3 += 1;
-                        if (counter3 === 3) {
+                        if (counter3 === 4) {
                             return element;
                         }
                     } else {
-                        console.log('no it is not');
-                        console.log(val);
+                        // console.log('no it is not');
+                        // console.log(val);
                         counter3 = -1;
                     }
                 };
@@ -348,12 +356,11 @@ let getRecommended = async (req, res, next) => {
         };
     });
    ///need to add topValue in each sub value when updating subs from session;
-    ///need to update item model to further categorize the subs, to prevent conflicting values from
-    ///popping up in top3
     ///need most popular subCats across main cats
     ///need most popular subCat for each main cat
     ///pull age and gender from each customer to inform item demographic
     ///update create item to account for new sub category system
+
 
     ////how to sort the items based on top main and then top sub. Do we recommed lower rated top mains
     ////with higher subs if top sub is higher?

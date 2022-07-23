@@ -137,7 +137,9 @@ let request = async () => {
     await axios({
         method: 'post',
         url: `http://localhost:3001/shop/${currentUserId}/${currentCategory}/${currentItemId}/session`,
-        data
+        data: {
+            userInterested: true
+        }
     }).then(data => console.log(data)).catch(err => console.log(err));
 };
 
@@ -319,6 +321,7 @@ if (notSameAsBillingBtn) {
         console.log(event.target.checked)
     })
     falseSignupBtn.addEventListener('click', async (event) => {
+        console.log('working')
         let street = document.getElementById('shipping-street');
         let state = document.getElementById('shipping-state');
         let zipcode = document.getElementById('shipping-zip');

@@ -6,11 +6,15 @@ const { notifyPriceChange, removeFromCart,
 const { session } = require('../middleware/session');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
+
 module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     let recommended = await getRecommended(req, res, next)
         .then(data => { return data })
         .catch(err => console.log(err));
+    console.log(recommended.map(function (element, index) {
+        return {main: element.category.main, sub: element.category.sub}
+    }))
     res.render('home', { currentUser, recommended });
 };
 
@@ -79,9 +83,10 @@ module.exports.updateItem = async (req, res, next) => {
     res.redirect(`${currentItem.id}`)
 }
 
+///admin
+///protect routes
+///login
 ///create async utility for errorHandling
-///try to start on a recommendation algorithm
-///seed your database and user history with categories
 
 ////Maybe I should make a review router
 ///reviews filter not working properly
@@ -114,13 +119,14 @@ module.exports.renderSignup = async (req, res, next) => {
 }
 
 module.exports.createUser = async (req, res, next) => {
-    let { name, email, address, phone } = req.body.bio;
+    let { name, email, address, phone, username } = req.body.bio;
+    let { password } = req.body;
     let { shipping, billing } = address;
     let geo = req.body.bio.address.geometry.split(',').map(x => parseFloat(x));
     let phoneModified = phone.match(/[0-9]/g).join('');
     let salesTax = salesTaxByState[states.indexOf(shipping.state)];
-    console.log(salesTax)
     let newUser = await new User({
+        username,
         bio: {
             name,
             email,
@@ -133,7 +139,9 @@ module.exports.createUser = async (req, res, next) => {
             phone: phoneModified
         }
     });
-    console.log(newUser.bio.address)
+    await User.register(newUser, password);
+    await newUser.save();
+    res.redirect(`/user/${userId}/shop/home`) ///// finish login and signup
 }
 
 module.exports.userCart = async (req, res, next) => {
@@ -151,32 +159,56 @@ module.exports.userCart = async (req, res, next) => {
 module.exports.callSession = async (req, res, next) => {
     let { userInterested, shouldUpdate } = req.body;
     let { itemId } = req.params;
+    let currentItem = await Item.findById(itemId);
+ 
     ///Setting initial value @ .2 instead of .1 to take the initial choosing of the item into account
     ///We have .1 for clicking the item, then another once interest is demonstrated;
     console.log('call session working');
     if (userInterested) {
         let currentItemSubs = await Item.findById(itemId).then(data => { return data.category.sub });
+        
         if (req.session.userInterested === undefined) {
              console.log('in here')
             req.session.userInterested = {};
-            req.session.userInterested[itemId] = {main: .2, sub: {}};
-            for (let cat of currentItemSubs) {
-                req.session.userInterested[itemId].sub[cat] = .2
+            req.session.userInterested[itemId] = {
+                main: .2,
+                sub: {
+                    gender: {},
+                    age: {},
+                    taste: {},
+                    niche: {}
+                }
+            };
+            for (let cat of Object.keys(currentItemSubs)) {
+                console.log(`establishing ${currentItem.category.sub[cat]} as .2`)
+                req.session.userInterested[itemId].sub[cat][currentItem.category.sub[cat]] = .2
             };
         } else if (Object.keys(req.session.userInterested).indexOf(itemId) === -1) {
-            console.log('SHOULDNT BE HERE')
+            console.log(`Establishing ${req.session.userInterested[itemId].main} as .2`)
             req.session.userInterested[itemId].main = .2
-            for (let cat of currentItemSubs) {
-                req.session.userInterested[itemId].sub[cat] = .2
+            for (let cat of Object.keys(currentItemSubs)) {
+                console.log(`establishing this ${currentItem.category.sub[cat]} as .2`)
+                req.session.userInterested[itemId].sub[cat][currentItem.category.sub[cat]] = .2
             };
         } else {
             req.session.userInterested[itemId].main += .1;
-            for (let cat of currentItemSubs) {
-                req.session.userInterested[itemId].sub[cat] += .1
+            for (let cat of Object.keys(currentItemSubs)) {
+                console.log(`Adding .1 ${currentItem.category.sub[cat]}`);
+                req.session.userInterested[itemId].sub[cat][currentItem.category.sub[cat]] += .1
             };
         };
+        console.log(req.session.userInterested[itemId].sub)
     } else if (shouldUpdate) {
         session(req, res, next);
     };
    return res.send('working')
+}
+
+module.exports.renderLogin = async (req, res, next) => {
+    res.render('login');
+}
+
+module.exports.userLogin = async (req, res, next) => {
+    console.log(req.user);
+    console.log(req.authenticated())
 }

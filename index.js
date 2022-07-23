@@ -15,6 +15,8 @@ let cloudinary = require('cloudinary');
 let { CloudinaryStorage } = require('multer-storage-cloudinary');
 let multer = require('multer');
 let passport = require('passport');
+let LocalStrategy = require('passport-local');
+let User = require('./models/userModel');
 let flash = require('connect-flash');
 let shopRouter = require('./controllers/routers/shopRouter');
 let itemRouter = require('./controllers/routers/itemRouter');
@@ -37,6 +39,11 @@ let sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash(sessionConfig));
+app.use(passport.initialize());
+app.use(passport.session(sessionConfig))
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 mongoose.connect('mongodb://localhost:27017/amazon')
     .then(console.log('Database is live'))
     .catch(err => console.log(err));

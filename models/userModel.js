@@ -2,8 +2,13 @@ let mongoose = require('mongoose');
 const { schema } = require('./itemModel');
 let Schema = mongoose.Schema;
 let model = mongoose.model
+let passportLocalMongoose = require('passport-local-mongoose');
 
 let userSchema = new Schema({
+    username: {
+        type: String,
+        required: true
+    },
     bio: {
         email: {
             type: String,
@@ -546,6 +551,7 @@ userSchema.method('deleteNotification', function (notifId) {
     this.save();
     return ''
 });
+userSchema.plugin(passportLocalMongoose);
 
 let User = model('user', userSchema);
 

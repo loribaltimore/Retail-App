@@ -20,7 +20,8 @@ let interest_engagement = async (req, res, next) => {
         currentUser.history.interest_by_category[category].main += req.session.userInterested[itemId].main;
        
         for (let cat in req.session.userInterested[itemId].sub) {
-            currentUser.history.interest_by_category[category].sub[cat] += req.session.userInterested[itemId].sub[cat];
+            let specificValue = Object.keys(req.session.userInterested[itemId].sub[cat]);
+            currentUser.history.interest_by_category[category].sub[cat][specificValue] += req.session.userInterested[itemId].sub[cat][specificValue];
         }
         console.log(`Users interest in ${category} AFTER ${currentUser.history.interest_by_category[category]}`);
     await currentItem.save();
