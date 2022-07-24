@@ -12,9 +12,9 @@ module.exports.renderHome = async (req, res, next) => {
     let recommended = await getRecommended(req, res, next)
         .then(data => { return data })
         .catch(err => console.log(err));
-    console.log(recommended.map(function (element, index) {
-        return {main: element.category.main, sub: element.category.sub}
-    }))
+    // console.log(recommended.map(function (element, index) {
+    //     return {main: element.category.main, sub: element.category.sub}
+    // }))
     res.render('home', { currentUser, recommended });
 };
 
@@ -139,8 +139,8 @@ module.exports.createUser = async (req, res, next) => {
             phone: phoneModified
         }
     });
-    await User.register(newUser, password);
-    await newUser.save();
+    // await User.register(newUser, password);
+    // await newUser.save();
     res.redirect(`/user/${userId}/shop/home`) ///// finish login and signup
 }
 

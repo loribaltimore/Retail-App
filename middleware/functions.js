@@ -288,11 +288,11 @@ let getRecommended = async (req, res, next) => {
     let { userId } = req.params;
     let currentUser = await User.findById(userId);
     let sortedCategoriesMain = currentUser.topCategories().slice(0, 3);
-    console.log(currentUser.history.interest_by_category);
-    console.log('Clothing');
-    console.log(currentUser.history.interest_by_category.clothing);
-    console.log('Top Categories');
-    console.log(sortedCategoriesMain);
+    // console.log(currentUser.history.interest_by_category);
+    // console.log('Clothing');
+    // console.log(currentUser.history.interest_by_category.clothing);
+    // console.log('Top Categories');
+    // console.log(sortedCategoriesMain);
     let testArr = [];
 
     let allItems = await Item.find({});
