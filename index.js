@@ -10,6 +10,7 @@ let bodyParser = require('body-parser');
 let cookieParser = require('cookie-parser');
 let session = require('express-session');
 let ejsMate = require('ejs-mate');
+let { errHandler } = require('./middleware/errHandling');
 let axios = require('axios');
 let expressValidate = require('express-validator');
 let cloudinary = require('cloudinary');
@@ -56,3 +57,4 @@ app.listen(3001, () => {
 app.use('/shop/:userId/:category/', shopRouter);
 app.use('/user/:userId/:category', userRouter);
 app.use('/shop/:category/item', itemRouter);
+app.use(errHandler);

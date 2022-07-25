@@ -7,7 +7,7 @@ let { updateItem, createItem, deleteItem,
     renderUpdateItem, deleteNotifications, renderSignup,
 createUser, renderLogin, userLogin} = require('../userController');
 let { renderItem } = require('../itemController')
-let { fetchLocationData } = require('../../middleware/functions');
+let { fetchLocationData, errCatch } = require('../../middleware/functions');
 let storage = require('../../middleware/cloudinaryConfig');
 let multer = require('multer');
 let upload = multer({ storage: storage });
@@ -20,12 +20,12 @@ let {body, check, validationResult} = require('express-validator');
 userRouter.route('/signup')
     .get(renderSignup)
     .post([
-        check('bio[name]').isLength({ min: 1 }),
-        check('bio[email]').isEmail(),
-        check('bio[phone]').isNumeric(),
-        check('username').isLength({min: 8}),
-        check('password').isLength({ min: 8 }),
-    ], expressValidateTest, createUser)
+        check('bio[name]').escape().trim().isLength({ min: 1, max: 12 }).isAlpha(),
+        check('bio[email]').escape().trim().isEmail().normalizeEmail(),
+        check('bio[phone]').escape().trim().isNumeric(),
+        check('username').escape().trim().isAlphanumeric().isLength({min: 8}),
+        check('password').escape().trim().isLength({ min: 8 }),
+    ], errCatch(expressValidateTest), errCatch(createUser))
 ///create errorHandler ------------
 
 userRouter.route('/login')

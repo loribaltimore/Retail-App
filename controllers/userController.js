@@ -119,14 +119,14 @@ module.exports.renderSignup = async (req, res, next) => {
 }
 
 module.exports.createUser = async (req, res, next) => {
-    let { name, email, address, phone, username } = req.body.bio;
-    let { password } = req.body;
+    let { name, email, address, phone } = req.body.bio;
+    let { password, username } = req.body;
     let { shipping, billing } = address;
     let geo = req.body.bio.address.geometry.split(',').map(x => parseFloat(x));
     let phoneModified = phone.match(/[0-9]/g).join('');
     let salesTax = salesTaxByState[states.indexOf(shipping.state)];
     let newUser = await new User({
-        username,
+        username: username,
         bio: {
             name,
             email,
@@ -139,9 +139,9 @@ module.exports.createUser = async (req, res, next) => {
             phone: phoneModified
         }
     });
-    // await User.register(newUser, password);
-    // await newUser.save();
-    res.redirect(`/user/${userId}/shop/home`) ///// finish login and signup
+    await User.register(newUser, password);
+    await newUser.save();
+    res.redirect(`/user/${newUser.Id}/shop/home`) ///// finish login and signup
 }
 
 module.exports.userCart = async (req, res, next) => {

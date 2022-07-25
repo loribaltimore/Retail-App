@@ -325,6 +325,7 @@ if (notSameAsBillingBtn) {
         let street = document.getElementById('shipping-street');
         let state = document.getElementById('shipping-state');
         let zipcode = document.getElementById('shipping-zip');
+        phoneInput.value = phoneInput.value.match(/(\d)/g).join('');
         let address = `${street.value} ${state.value}, ${zipcode.value}`;
         if (allStates.indexOf(state.value) > -1) {
             let info = await axios({
@@ -374,7 +375,7 @@ if (notSameAsBillingBtn) {
         if (phoneInput.value.length === 3) {
             phoneInput.value = `(${phoneInput.value})`
         } else if (phoneInput.value.length === 8) {
-            phoneInput.value = `${phoneInput.value} -`
+            phoneInput.value = `${phoneInput.value} - `
         };
     });
 }

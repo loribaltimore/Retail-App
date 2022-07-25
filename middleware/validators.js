@@ -1,5 +1,5 @@
 let {body, check, validationResult} = require('express-validator');
-
+let { CustomError } = require('./errHandling');
 module.exports.categoryValidation = async (req, res, next) => {
     let acceptableRoutes = ['profile', 'item', 'shop', 'notifications',]
     if (acceptableRoutes.indexOf(req.params.category) < 0) {
@@ -11,16 +11,17 @@ module.exports.categoryValidation = async (req, res, next) => {
     next();
 };
 
-module.exports.userValidation = async (req, res, next) => {
-    return [
-    ];
-}
-
-module.exports.expressValidateTest = async (req, res) => {
+module.exports.expressValidateTest = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).jsonp(errors.array());
+       
+        throw new CustomError('No Bueno', 404);
     } else {
-        res.send({});
+        next();
     }
 };
+
+///continue with error handling
+///why cant I make custom messages for validation errors
+///continue then to helmet for header security
+///then to configuring cookie and session for safety and security 

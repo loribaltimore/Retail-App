@@ -304,7 +304,7 @@ let getRecommended = async (req, res, next) => {
     // console.log(sortedUserCats);
     // console.log(topThree.map(x => x.category.main));
 
-///This block should filter all items in topThree that have all three of the top three subs from the items
+    ///This block should filter all items in topThree that have all three of the top three subs from the items
     ///main category in the sub category index
     ///I will user a frequency counter to verify that they're all there for practice
     let topResults = topThree.filter(function (element, index) {
@@ -355,7 +355,7 @@ let getRecommended = async (req, res, next) => {
             counter3 = 0;
         };
     });
-   ///need to add topValue in each sub value when updating subs from session;
+    ///need to add topValue in each sub value when updating subs from session;
     ///need most popular subCats across main cats
     ///need most popular subCat for each main cat
     ///pull age and gender from each customer to inform item demographic
@@ -372,12 +372,39 @@ let getRecommended = async (req, res, next) => {
     ///sub categories. ///This way we can see the precise mix of them.
     ///This could be incremented by asking customers to sort items themselves in exchange for a reward;
     return topResults;
-}
+};
+
+let errCatch = (fn) => {
+    return (req, res, next) => {
+        return fn(req, res, next).then(data => { return data }).catch(err => next(err));
+    };
+};
+
+let errSwitch = (param) => {
+    switch (param) {
+        case 'username':
+            `Username must be at least 8, strictly alphanumeric characters.`;
+            break;
+        case 'password':
+           'Password must be at least 8 characters. / \\ < > $ % = are forbidden.';
+        case 'phone':
+             'Phone number must be a valid, 10 digit number.';
+            break;
+        case 'email':
+           'Email must be a valid email address.';
+            break;
+        case 'name':
+            'Name must be between 1 and 12, strictly alphabetical characters.';
+            break;
+    }
+};
+
+
 
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
     addReview, deleteReview, editReview, fetchLocationData, ShoppingCart,
-    changeQty, removeFromCart, getRecommended
+    changeQty, removeFromCart, getRecommended, errCatch
 };
