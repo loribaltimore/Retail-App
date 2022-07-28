@@ -37,20 +37,28 @@ module.exports.itemEngagement = async (req, res, next) => {
     let currentUser = await User.findById(userId);
     let currentItem = await Item.findById(itemId);
     if (req.body.engage) {
-        await userEngage(req, res, next, currentUser, currentItem, itemId);
+        await userEngage(req, res, next, currentUser, currentItem, itemId)
+            .then(data => { return data })
+            .catch(err => next(err));
     } else {
-        await userDisengage(req, currentUser, currentItem, itemId);
+        await userDisengage(req, currentUser, currentItem, itemId)
+        .then(data => { return data })
+        .catch(err => console.log(err));;
     };
-    await currentUser.save();
-    await currentItem.save();
+    await currentUser.save().then(data => { return data })
+    .catch(err => console.log(err));;
+    await currentItem.save().then(data => { return data })
+            .catch(err => console.log(err));
     res.redirect(res.locals.currentUrl)
 };
 
 module.exports.itemReview = async (req, res, next) => {
     let { userId, itemId } = req.params;
     let { method } = req;
-    let currentUser = await User.findById(userId);
-    let currentItem = await Item.findById(itemId);
+    let currentUser = await User.findById(userId).then(data => { return data })
+    .catch(err => console.log(err));;
+    let currentItem = await Item.findById(itemId).then(data => { return data })
+    .catch(err => console.log(err));;
     switch (method) {
         case 'POST':
             await addReview(req, currentUser, currentItem);
@@ -62,8 +70,9 @@ module.exports.itemReview = async (req, res, next) => {
             await editReview(req, currentUser, currentItem);
             break;
     };
-    await currentUser.save();
-    await currentItem.save();
+    await currentUser.save().then(data => {return data}).catch(err => next(err));
+    await currentItem.save().then(data => { return data })
+    .catch(err => console.log(err));;
     res.redirect(`/shop/${currentUser.id}/${currentItem.category.main}/${currentItem.id}`);
 }
 

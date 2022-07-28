@@ -4,6 +4,7 @@ const User = require('../models/userModel');
 const { notifyPriceChange, removeFromCart,
     changeQty, getRecommended } = require('../middleware/functions');
 const { session } = require('../middleware/session');
+let { CustomError } = require('../middleware/errHandling');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 
@@ -212,3 +213,7 @@ module.exports.userLogin = async (req, res, next) => {
     console.log(req.user);
     console.log(req.authenticated())
 }
+
+
+//finish error handling
+///must be next(err) to invoke express errhandling capabilities

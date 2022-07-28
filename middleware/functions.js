@@ -4,7 +4,9 @@ let User = require('../models/userModel');
 let mongoose = require('mongoose');
 let baseClient = require('@mapbox/mapbox-sdk/services/geocoding');
 const { transformAuthInfo } = require('passport');
+let { CustomError } = require('../middleware/errHandling');
 let geocoder = baseClient({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
+let uid = require('uid-safe');
 
 let removeItem = function (req) {
     console.log(req.session.cart[0].items.length)
@@ -63,7 +65,8 @@ class Notification{
     }
     async removeNotification(currentUser) {
         currentUser.notifications.pull({ message: this.message });
-        await currentUser.save();
+        await currentUser.save().then(data => { return data })
+        .catch(err => console.log(err));
     }
     
 }
@@ -89,7 +92,8 @@ const newNotification = async (currentUser, currentItem, category) => {
     }
     let newNotification = new Notification(message, category, item);
     currentUser.notifications.push(newNotification);
-    await currentUser.save();
+    await currentUser.save().then(data => { return data })
+    .catch(err => console.log(err));;
     console.log('newNotification is working')
 }
 
@@ -100,7 +104,7 @@ const notifyPriceChange = async (currentItem, currentUser) => {
     allWatchingUsers.forEach(async (element, index) => {
         await newNotification(element, currentItem, 'sale')
             .then(data => { return data })
-            .catch(err => console.log(err));
+            .catch(err => next(err));
     });
 };
 
@@ -110,7 +114,7 @@ let increaseInterest = function (currentUser, currentItem) {
     for (let cat of currentItem.category.sub) {
         currentUser.history.interest_by_category[currentItem.category.main].sub[cat] += 1;
     };
-};
+}
 
 let watchItem = async (req, currentUser, currentItem, itemId) => {
     currentUser.history.watching.push(itemId);
@@ -198,20 +202,25 @@ let changeQty = async (req, res, next) => {
 };
 
 
+
 let userEngage = async (req, res, next, currentUser, currentItem, itemId) => {
     let { action } = req.body.engage;
     switch (action) {
         case 'watch':
-            await watchItem(req, currentUser, currentItem, itemId);
+            await watchItem(req, currentUser, currentItem, itemId).then(data => { return data })
+            .catch(err => console.log(err));
             break;
         case 'like':
-            await likeItem(req, currentUser, currentItem, itemId);
+            await likeItem(req, currentUser, currentItem, itemId).then(data => { return data })
+            .catch(err => next(err));
             break;
         case 'add':
-            await addToCart(req, res, currentUser, currentItem);
+            await addToCart(req, res, currentUser, currentItem).then(data => { return data })
+            .catch(err => console.log(err));;
             break;
             case 'update-cart':
-                await changeQty(req, res, next);
+                await changeQty(req, res, next).then(data => { return data })
+                .catch(err => console.log(err));
             break;  
     };
 };
@@ -220,10 +229,12 @@ let userDisengage = async (req, currentUser, currentItem, itemId) => {
     let { action} = req.body.disengage;
     switch (action) {
         case 'watch':
-            await unwatchItem(req, currentUser, currentItem, itemId);
+            await unwatchItem(req, currentUser, currentItem, itemId).then(data => { return data })
+            .catch(err => console.log(err));;
             break;
         case 'like':
-            await unlikeItem(req, currentUser, currentItem, itemId);
+            await unlikeItem(req, currentUser, currentItem, itemId).then(data => { return data })
+            .catch(err => console.log(err));;
             break;
            
     };
@@ -263,14 +274,17 @@ let editReview = async (req, res, next) => {
     let { reviewId, itemId } = req.params;
     let { review_body, rating } = req.body.review;
     console.log(review_body, rating);
-    let review = await Review.findById(reviewId);
+    let review = await Review.findById(reviewId).then(data => { return data })
+    .catch(err => console.log(err));
     console.log(review)
-    let currentItem = await Item.findById(itemId);
+    let currentItem = await Item.findById(itemId).then(data => { return data })
+    .catch(err => console.log(err));
     console.log(currentItem.reviews.total_rating);
     currentItem.reviews.total_rating = (currentItem.reviews.total_rating - review.rating) + parseInt(rating);
     let currentReview = await Review.findByIdAndUpdate(reviewId, { body: review_body, rating: rating }, {new: true} )
         .then(data => console.log(data)).catch(err => console.log(err));
-    await currentItem.save();
+    await currentItem.save().then(data => { return data })
+    .catch(err => console.log(err));
     req.flash('success', 'Review Successfully Updated!');
 }
 
@@ -286,7 +300,8 @@ let fetchLocationData = async (req, res, next) => {
 
 let getRecommended = async (req, res, next) => {
     let { userId } = req.params;
-    let currentUser = await User.findById(userId);
+    let currentUser = await User.findById(userId).then(data => { return data })
+    .catch(err => console.log(err));
     let sortedCategoriesMain = currentUser.topCategories().slice(0, 3);
     // console.log(currentUser.history.interest_by_category);
     // console.log('Clothing');
@@ -401,10 +416,12 @@ let errSwitch = (param) => {
 
 
 
+let seshGenId = async () => { let genId = await uid(18).then(data => { console.log(data); return data }).catch(err => console.log(err)); return genId };
+
 
 module.exports = {
     ShoppingCartItem, notifyPriceChange, Notification,
     newNotification, userEngage, userDisengage,
     addReview, deleteReview, editReview, fetchLocationData, ShoppingCart,
-    changeQty, removeFromCart, getRecommended, errCatch
+    changeQty, removeFromCart, getRecommended, errCatch, seshGenId
 };

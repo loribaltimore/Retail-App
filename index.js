@@ -33,11 +33,15 @@ app.use(mongoSanitize());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.engine('ejs', ejsMate);
+let { seshGenId } = require('./middleware/functions');
 let sessionConfig = {
-    secret: 'secret',
-    saveUninitialized: false,
-    resave: true,
+    secret: ['thisisusedtohashtheid', 'thisisusedforverification', 'thisisalsousedforcerification'],
+    name: 'changethisnametokeepthehackersguessing',
+    saveUninitialized: true,
+    resave: false,
     cookie: {
+        httpOnly: true,
+        sameSite: true,
         maxAge: 300000
     }
 };

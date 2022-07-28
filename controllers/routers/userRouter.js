@@ -11,6 +11,7 @@ let { fetchLocationData, errCatch } = require('../../middleware/functions');
 let storage = require('../../middleware/cloudinaryConfig');
 let multer = require('multer');
 let upload = multer({ storage: storage });
+let { CustomeError } = require('../../middleware/errHandling');
 let { locals } = require('../../middleware/locals');
 let { session } = require('../../middleware/session');
 const { categoryValidation, expressValidateTest, userValidation } = require('../../middleware/validators');
@@ -29,24 +30,24 @@ userRouter.route('/signup')
 ///create errorHandler ------------
 
 userRouter.route('/login')
-    .get(renderLogin)
-.post(passport.authenticate('local', {failureFlash: 'Cannot Authenticate User', failureRedirect: 'login'}), userLogin)
+    .get(errCatch(renderLogin))
+.post(errCatch(passport.authenticate('local', {failureFlash: 'Cannot Authenticate User', failureRedirect: 'login'})), errCatch(userLogin))
 
 userRouter.get('/locationData', fetchLocationData);
 
-userRouter.get('/home', expressValidateTest, renderHome);
-userRouter.get('/myItems', renderAllItems);
-userRouter.post('/:notifId', deleteNotifications);
+userRouter.get('/home', errCatch(expressValidateTest), errCatch(renderHome));
+userRouter.get('/myItems', errCatch(renderAllItems));
+userRouter.post('/:notifId', errCatch(deleteNotifications));
 userRouter.route('/create')
-.get(renderCreateItem)
-    .post(upload.array('img'), createItem)
+.get(errCatch(renderCreateItem))
+    .post(upload.array('img'), errCatch(createItem))
 
 
 
 userRouter.route('/:itemId')
-    .get(renderItem)
-.put(upload.array('img'), updateItem)
-    .delete(deleteItem);
+    .get(errCatch(renderItem))
+.put(upload.array('img'), errCatch(updateItem))
+    .delete(errCatch(deleteItem));
     
 
 

@@ -14,8 +14,8 @@ module.exports.categoryValidation = async (req, res, next) => {
 module.exports.expressValidateTest = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-       
-        throw new CustomError('No Bueno', 404);
+        console.log(errors.erros);
+        throw new CustomError('Error Creating Account. Please Try Again', 404);
     } else {
         next();
     }

@@ -7,9 +7,10 @@ class CustomError extends Error{
 };
 
 let errHandler = async (err, req, res, next) => {
-    let { message, status } = err;
-    console.log(status)
-    res.status(status).render('errorPage', { message, status });
+    let { message, stack } = err;
+    console.log(stack);
+    let status = (err.status || 200);
+    res.status(status).render('errorPage', { message, stack, status });
 }
 
 module.exports = {CustomError, errHandler}

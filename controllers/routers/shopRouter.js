@@ -4,6 +4,7 @@ let { renderCategory, renderItem, itemEngagement, itemReview } = require('../ite
 let { userCart, callSession } = require('../userController');
 let { locals } = require('../../middleware/locals');
 let { session } = require('../../middleware/session');
+let { errCatch } = require('../../middleware/functions');
 shopRouter.use(locals);
 shopRouter.use((req, res, next) => {
     let acceptableParams = ['clothing', 'grocery', 'home', 'electronics', 'DIY', 'toys', 'cart'];
@@ -13,22 +14,22 @@ shopRouter.use((req, res, next) => {
     };
     next();
 })
-shopRouter.get('/', renderCategory);
+shopRouter.get('/', errCatch(renderCategory));
 shopRouter.route('/qty')
-    .post(userCart)
+    .post(errCatch(userCart))
 
 shopRouter.route('/:itemId')
-    .get(session, renderItem)
-    .post(itemEngagement);
+    .get(errCatch(session), errCatch(renderItem))
+    .post(errCatch(itemEngagement));
 
 
-shopRouter.post('/:itemId/review', itemReview);
+shopRouter.post('/:itemId/review', errCatch(itemReview));
 
 shopRouter.route('/:itemId/review/:reviewId')
-    .put(itemReview)
-    .delete(itemReview);
+    .put(errCatch(itemReview))
+    .delete(errCatch(itemReview));
 
-shopRouter.post('/:itemId/session', callSession);
+shopRouter.post('/:itemId/session', errCatch(callSession));
 
 
 module.exports = shopRouter;
