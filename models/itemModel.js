@@ -112,6 +112,15 @@ itemSchema.virtual('averageRating').get(function () {
     return currentItem.reviews.total_rating / currentItem.reviews.qty;
 });
 
+itemSchema.virtual('subCategories').get(function () {
+    let currentItem = this;
+    let allSubs = Object.keys(currentItem.category.sub);
+    let subCategories = allSubs.map(function (element, index) {
+        return { sub: element, cat: currentItem.category.sub[element] };
+    });
+    return subCategories
+})
+
 
 
 let Item = model('item', itemSchema);

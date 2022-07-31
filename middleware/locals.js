@@ -1,5 +1,8 @@
 let User = require('../models/userModel');
-
+let crypto = require('crypto');
+let randomHash = () => {
+    return crypto.randomBytes(16).toString('hex');
+}
 module.exports.locals = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     res.locals.success = req.flash('success');
@@ -33,6 +36,10 @@ module.exports.locals = async (req, res, next) => {
         }
     } else { res.locals.cart = [] };
     res.locals.allNotifs = currentUser.notifications;
+    if (process.env.NODE_ENV !== 'production') {
+        res.locals.isProduction = false  
+    } else { res.locals.isProduction = true };
+    res.locals.hash = randomHash();
     next();
 }
 

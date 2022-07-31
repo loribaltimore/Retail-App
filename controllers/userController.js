@@ -5,6 +5,7 @@ const { notifyPriceChange, removeFromCart,
     changeQty, getRecommended } = require('../middleware/functions');
 const { session } = require('../middleware/session');
 let { CustomError } = require('../middleware/errHandling');
+let { scriptSrcValidator, imgSrcValidator, styleSrcValidator } = require('../middleware/validators');
 let { salesTaxByState, states } = require('../models/seeds/sales_tax');
 
 
@@ -12,10 +13,9 @@ module.exports.renderHome = async (req, res, next) => {
     let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     let recommended = await getRecommended(req, res, next)
         .then(data => { return data })
-        .catch(err => console.log(err));
-    // console.log(recommended.map(function (element, index) {
-    //     return {main: element.category.main, sub: element.category.sub}
-    // }))
+        .catch(err => next(err));
+    let validScripts = scriptSrcValidator(res);
+        res.set("Content-Security-Policy", `script-src ${validScripts.join(' ')}; img-src ${imgSrcValidator.join(' ')}; style-src ${styleSrcValidator.join(' ')}`);
     res.render('home', { currentUser, recommended });
 };
 
@@ -39,7 +39,7 @@ module.exports.createItem = async (req, res, next) => {
             sub: cat.sub
         },
         img: images
-    }).save().then(data => {return data}).catch(err => console.log(err));
+    }).save().then(data => {return data}).catch(err => next(err));
     console.log(newItem)
     req.flash(`success', 'Successfully added ${newItem.name}`);
     res.redirect(`${newItem.id}`);
@@ -49,7 +49,7 @@ module.exports.deleteItem = async (req, res, next) => {
     let { id } = req.params;
     await Item.findByIdAndDelete(id)
         .then(data => console.log(data))
-        .catch(err => console.log(err));
+        .catch(err => next(err));
     req.flash('success', 'Successfully Deleted!');
     res.redirect('/create')
 }
@@ -65,7 +65,7 @@ module.exports.updateItem = async (req, res, next) => {
     });
     let currentItem = await Item.findByIdAndUpdate(itemId, { name, price, description, cat })
         .then(data => { isPriceLess = data.price; return data })
-        .catch(err => console.log(err));
+        .catch(err => next(err));
     if (img) {
         currentItem.img = currentItem.img.filter(function (element, index) {
             if (img.indexOf(element.filename) === -1) {
@@ -77,7 +77,7 @@ module.exports.updateItem = async (req, res, next) => {
 
     if (currentItem.price > price) {
         console.log('getting in here')
-        await notifyPriceChange(currentItem).then(data => console.log(data)).catch(err => console.log(err));
+        await notifyPriceChange(currentItem).then(data => console.log(data)).catch(err => next(err));
     };
     await currentItem.save();
     req.flash('success', 'Successfully Updated Listing');
@@ -103,7 +103,7 @@ module.exports.renderAllItems = async (req, res, next) => {
     let currentUser = await User.findById(userId);
     let currentUserAllItemsPop = await currentUser.populate({ path: 'history.created' })
         .then(data => { return data })
-        .catch(err => console.log(err));
+        .catch(err => next(err));
     let allItems = currentUserAllItemsPop.history.created;
     res.render('allUserItems', { allItems });
 };
@@ -214,6 +214,4 @@ module.exports.userLogin = async (req, res, next) => {
     console.log(req.authenticated())
 }
 
-
-//finish error handling
-///must be next(err) to invoke express errhandling capabilities
+///finish helmet. You need to make sure nonce updates on every request.

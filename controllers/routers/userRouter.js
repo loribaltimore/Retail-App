@@ -27,7 +27,6 @@ userRouter.route('/signup')
         check('username').escape().trim().isAlphanumeric().isLength({min: 8}),
         check('password').escape().trim().isLength({ min: 8 }),
     ], errCatch(expressValidateTest), errCatch(createUser))
-///create errorHandler ------------
 
 userRouter.route('/login')
     .get(errCatch(renderLogin))

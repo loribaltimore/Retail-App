@@ -8,7 +8,6 @@ class CustomError extends Error{
 
 let errHandler = async (err, req, res, next) => {
     let { message, stack } = err;
-    console.log(stack);
     let status = (err.status || 200);
     res.status(status).render('errorPage', { message, stack, status });
 }

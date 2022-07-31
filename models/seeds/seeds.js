@@ -234,26 +234,32 @@ let random = function () {
 }
 let seedInterest = async (req, res, next) => {
     let allUsers = await User.find({});
-    for (let currentUser of allUsers) {
-        currentUser.history.interest_by_category = {};
-        let allCats = Object.keys(currentUser.history.interest_by_category);
-        for (let cat of allCats) {
-            currentUser.history.interest_by_category[cat].main = random();
-            let allSubs = Object.keys(currentUser.history.interest_by_category[cat].sub);
-            allSubs.forEach(function (element, index) {
-                let allSubVals = Object.keys(currentUser.history.interest_by_category[cat].sub[element]);
-                allSubVals.forEach(function (el, index) {
-                    if (el !== 'top') {
-                        currentUser.history.interest_by_category[cat].sub[element][el] = random();
-                    } else {
-                        currentUser.history.interest_by_category[cat].sub[element]
-                    }
-                });
+    // for (let currentUser of allUsers) {
+    //     currentUser.history.interest_by_category = {};
+    //     let allCats = Object.keys(currentUser.history.interest_by_category);
+    //     for (let cat of allCats) {
+    //         currentUser.history.interest_by_category[cat].main = random();
+    //         let allSubs = Object.keys(currentUser.history.interest_by_category[cat].sub);
+    //         allSubs.forEach(function (element, index) {
+    //             let allSubVals = Object.keys(currentUser.history.interest_by_category[cat].sub[element]);
+    //             allSubVals.forEach(function (el, index) {
+    //                 if (el !== 'top') {
+    //                     currentUser.history.interest_by_category[cat].sub[element][el] = random();
+    //                 } else {
+    //                     currentUser.history.interest_by_category[cat].sub[element]
+    //                 }
+    //             });
 
-            });
+    //         });
+    //     }
+    //     await currentUser.save();
+    // }
+    for (let user of allUsers) {
+        if (user.username === undefined) {
+            user.username = user.bio.name + Math.floor(Math.random() * 100 + 1);
+            await user.save();
         }
-        await currentUser.save();
     }
    
 }
-// seedInterest();
+seedInterest();

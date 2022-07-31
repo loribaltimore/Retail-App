@@ -66,7 +66,7 @@ class Notification{
     async removeNotification(currentUser) {
         currentUser.notifications.pull({ message: this.message });
         await currentUser.save().then(data => { return data })
-        .catch(err => console.log(err));
+        .catch(err => next(err));
     }
     
 }
@@ -93,14 +93,14 @@ const newNotification = async (currentUser, currentItem, category) => {
     let newNotification = new Notification(message, category, item);
     currentUser.notifications.push(newNotification);
     await currentUser.save().then(data => { return data })
-    .catch(err => console.log(err));;
+    .catch(err => next(err));;
     console.log('newNotification is working')
 }
 
 const notifyPriceChange = async (currentItem, currentUser) => {
     console.log('notify price change working')
     let allWatchingUsers = await currentItem.populate({ path: 'user_engagement.watched_by' })
-        .then(data => { return data.user_engagement.watched_by }).catch(err => console.log(err));
+        .then(data => { return data.user_engagement.watched_by }).catch(err => next(err));
     allWatchingUsers.forEach(async (element, index) => {
         await newNotification(element, currentItem, 'sale')
             .then(data => { return data })
@@ -111,8 +111,10 @@ const notifyPriceChange = async (currentItem, currentUser) => {
 let increaseInterest = function (currentUser, currentItem) {
     currentItem.user_engagement.total_interest += 1;
     currentUser.history.interest_by_category[currentItem.category.main].main += 1;
-    for (let cat of currentItem.category.sub) {
-        currentUser.history.interest_by_category[currentItem.category.main].sub[cat] += 1;
+    let allSubCategories = currentItem.subCategories;
+    currentItem.category.map(x => x)
+    for (let cat of allSubCategories) {
+        currentUser.history.interest_by_category[currentItem.category.main].sub[cat.sub][cat.cat] += 1;
     };
 }
 
@@ -208,19 +210,19 @@ let userEngage = async (req, res, next, currentUser, currentItem, itemId) => {
     switch (action) {
         case 'watch':
             await watchItem(req, currentUser, currentItem, itemId).then(data => { return data })
-            .catch(err => console.log(err));
+            .catch(err => next(new CustomError('Cant Watch Item. Please Try Again Later.', 404)));
             break;
         case 'like':
             await likeItem(req, currentUser, currentItem, itemId).then(data => { return data })
-            .catch(err => next(err));
+            .catch(err => next(new CustomError('Cant Like Item. Please Try Again Later', 404)));
             break;
         case 'add':
             await addToCart(req, res, currentUser, currentItem).then(data => { return data })
-            .catch(err => console.log(err));;
+            .catch(err => next(new CustomError('Cant Add Item. Please Try Again Later', 404)));;
             break;
             case 'update-cart':
                 await changeQty(req, res, next).then(data => { return data })
-                .catch(err => console.log(err));
+                .catch(err => next(new CustomError('Cant Change Quantity. Please Try Again Later', 404)));
             break;  
     };
 };
@@ -230,11 +232,11 @@ let userDisengage = async (req, currentUser, currentItem, itemId) => {
     switch (action) {
         case 'watch':
             await unwatchItem(req, currentUser, currentItem, itemId).then(data => { return data })
-            .catch(err => console.log(err));;
+            .catch(err => next(new CustomError('Cant Unwatch Item. Please Try Again Later', 404)));;
             break;
         case 'like':
             await unlikeItem(req, currentUser, currentItem, itemId).then(data => { return data })
-            .catch(err => console.log(err));;
+            .catch(err => next(new CustomError('Cant Unlike Item. Please Try Again Later', 404)));;
             break;
            
     };
@@ -252,7 +254,7 @@ let addReview = async (req, currentUser, currentItem) => {
         rating: rating
     }).save()
         .then(data => { return data })
-        .catch(err => console.log(err));
+        .catch(err => next(new CustomError('Cant Create Review. Please Try Again Later', 404)));
     console.log(currentUser.history)
     currentUser.history.reviews.push(newReview._id);
     currentItem.reviews.all_reviews.push(newReview._id);
@@ -262,7 +264,7 @@ let addReview = async (req, currentUser, currentItem) => {
 let deleteReview = async (req, currentUser, currentItem) => {
     let { reviewId } = req.params;
     let currentReview = await Review.findByIdAndDelete(reviewId)
-        .then(data => { return data }).catch(err => console.log(err));
+        .then(data => { return data }).catch(err => next(new CustomError('Cant Delete Review. Please Try Again Later.', 404)));
     currentUser.history.reviews.pull(currentReview._id);
     currentItem.reviews.all_reviews.pull(currentReview._id);
     currentItem.reviews.qty -= 1;
@@ -275,16 +277,16 @@ let editReview = async (req, res, next) => {
     let { review_body, rating } = req.body.review;
     console.log(review_body, rating);
     let review = await Review.findById(reviewId).then(data => { return data })
-    .catch(err => console.log(err));
+    .catch(err => next(new CustomError('Cant Find Review to Edit. Please Try Again Later', 404)));
     console.log(review)
     let currentItem = await Item.findById(itemId).then(data => { return data })
-    .catch(err => console.log(err));
+    .catch(err => next(new CustomError('Cant Fetch Item. Please Try Again Later', 404)));
     console.log(currentItem.reviews.total_rating);
     currentItem.reviews.total_rating = (currentItem.reviews.total_rating - review.rating) + parseInt(rating);
     let currentReview = await Review.findByIdAndUpdate(reviewId, { body: review_body, rating: rating }, {new: true} )
-        .then(data => console.log(data)).catch(err => console.log(err));
+        .then(data => console.log(data)).catch(err => next(new CustomError('Unable to Update Review. Please Try Again Later.', 404)));
     await currentItem.save().then(data => { return data })
-    .catch(err => console.log(err));
+    .catch(err => next(err));
     req.flash('success', 'Review Successfully Updated!');
 }
 
@@ -294,14 +296,14 @@ let fetchLocationData = async (req, res, next) => {
         query: address,
         limit: 1
     }).send()
-        .then(data => { return data.body.features[0].geometry }).catch(err => console.log(err));
+        .then(data => { return data.body.features[0].geometry }).catch(err => next(new CustomError('Unable to Fetch Location Data', 404)));
     return res.send(info)
 };
 
 let getRecommended = async (req, res, next) => {
     let { userId } = req.params;
     let currentUser = await User.findById(userId).then(data => { return data })
-    .catch(err => console.log(err));
+    .catch(err => next(new CustomError('Cant Find Current User', 404)));
     let sortedCategoriesMain = currentUser.topCategories().slice(0, 3);
     // console.log(currentUser.history.interest_by_category);
     // console.log('Clothing');
@@ -416,7 +418,7 @@ let errSwitch = (param) => {
 
 
 
-let seshGenId = async () => { let genId = await uid(18).then(data => { console.log(data); return data }).catch(err => console.log(err)); return genId };
+let seshGenId = async () => { let genId = await uid(18).then(data => { console.log(data); return data }).catch(err => next(err)); return genId };
 
 
 module.exports = {
