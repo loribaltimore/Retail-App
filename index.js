@@ -59,10 +59,11 @@ app.set('view engine', 'ejs');
 app.engine('ejs', ejsMate);
 let { seshGenId } = require('./middleware/functions');
 if (process.env.NODE_ENV !== 'production') {
-    dbUrl = 'mongodb://localhost:27017/amazon'
-} else { dbUrl = process.env.MONGO_ATLAS}
+    secret = ['thisisusedtohashtheid', 'thisisusedforverification', 'thisisalsousedforcerification'];
+    dbUrl = 'mongodb://localhost:27017/amazon';
+} else { secret = process.env.SECRET; dbUrl = process.env.MONGO_ATLAS}
 let sessionConfig = {
-    secret: ['thisisusedtohashtheid', 'thisisusedforverification', 'thisisalsousedforcerification'],
+    secret: secret,
     name: 'changethisnametokeepthehackersguessing',
     saveUninitialized: true,
     resave: false,
