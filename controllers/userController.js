@@ -14,8 +14,6 @@ module.exports.renderHome = async (req, res, next) => {
     let recommended = await getRecommended(req, res, next)
         .then(data => { return data })
         .catch(err => next(err));
-    let validScripts = scriptSrcValidator(res);
-        res.set("Content-Security-Policy", `script-src ${validScripts.join(' ')}; img-src ${imgSrcValidator.join(' ')}; style-src ${styleSrcValidator.join(' ')}`);
     res.render('home', { currentUser, recommended });
 };
 
@@ -214,4 +212,6 @@ module.exports.userLogin = async (req, res, next) => {
     console.log(req.authenticated())
 }
 
+
+///get your app deployed on HEROKU. You've finally gone all the way through
 ///finish helmet. You need to make sure nonce updates on every request.

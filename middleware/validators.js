@@ -1,7 +1,7 @@
 let {body, check, validationResult} = require('express-validator');
 let { CustomError } = require('./errHandling');
 const crypto = require('crypto');
-
+let helmet = require('helmet');
 module.exports.categoryValidation = async (req, res, next) => {
     let acceptableRoutes = ['profile', 'item', 'shop', 'notifications',]
     if (acceptableRoutes.indexOf(req.params.category) < 0) {
@@ -25,20 +25,8 @@ module.exports.expressValidateTest = async (req, res, next) => {
 
 
 
-let hash = crypto.randomBytes(16).toString('base64');
 module.exports.scriptSrcValidator = (res) => {
-    let hash = undefined;
-    if (res.locals.hash !== undefined) {
-         hash = res.locals.hash;
-    } else { hash = crypto.randomBytes(16).toString('hex');}
-    return[
-        'self',
-        `'nonce-${hash}'`,
-        'https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js',
-        'http://localhost:3001/js/userScript.js',
-        'http://localhost:3001/js/bootstrap.min.js',
-        'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js',
-    ];
+   
 };
 module.exports.imgSrcValidator = ['self', 'blob:', 'data:', `https://res.cloudinary.com/demgmfow6/`],
     module.exports.styleSrcValidator = [
@@ -58,6 +46,19 @@ module.exports.percentEncoderforMongoAtlas = function (psswrd) {
         } else {return element}
     }).join('')
 };
+
+module.exports.setSecurityPolicy = async (req, res, next) => {
+       let hash = crypto.randomBytes(16).toString('hex');
+        console.log('RES.LOCALS.HASH IN VALIDATOR')
+        console.log(hash)
+     
+       let  validScripts = 'balls';
+       
+    console.log(validScripts)
+    await 
+    console.log('gettinghere');
+    return [hash, validScripts];
+}
 ///continue with error handling
 ///why cant I make custom messages for validation errors
 ///continue then to helmet for header security

@@ -1,5 +1,6 @@
 let User = require('../models/userModel');
 let crypto = require('crypto');
+let { setSecurityPolicy } = require('./validators');
 let randomHash = () => {
     return crypto.randomBytes(16).toString('hex');
 }
@@ -39,7 +40,6 @@ module.exports.locals = async (req, res, next) => {
     if (process.env.NODE_ENV !== 'production') {
         res.locals.isProduction = false  
     } else { res.locals.isProduction = true };
-    res.locals.hash = randomHash();
     next();
 }
 

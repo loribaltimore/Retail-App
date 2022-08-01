@@ -32,27 +32,39 @@ app.use(methodOverride('_method'));
 app.use(cookieParser('secret'));
 app.use(express.json());
 let crypto = require('crypto');
-let { hash, scriptSrcValidator } = require('./middleware/validators');
-let res = { locals: { hash: crypto.randomBytes(16).toString('base64') } };
-let validScripts = scriptSrcValidator(res);
+let { hash, scriptSrcValidator, setSecurityPolicy } = require('./middleware/validators');
+let { errCatch } = require('./middleware/functions');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 app.use(helmet.crossOriginEmbedderPolicy({
-        policy: 'credentialless'
-}))
+    policy: 'credentialless'
+}));
+app.use((req, res, next) => {
+    console.log('wsdfsd')
+    res.locals.hash = crypto.randomBytes(16).toString('hex')
+    next()
+});
 app.use(helmet.contentSecurityPolicy({
     directives: {
-        'script-src': validScripts,
+        'script-src': [
+            'self',
+            (req, res) => { return `'nonce-${res.locals.hash}'` },
+            'https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js',
+            'http://localhost:3001/js/userScript.js',
+            'http://localhost:3001/js/bootstrap.min.js',
+            'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js',
+        ],
         'img-src': ['self', 'blob:', 'data:', `https://res.cloudinary.com/demgmfow6/`],
         'style-src': [
             'self',
+            (req, res) => { return `'nonce-${res.locals.hash}'` },
             'https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css',
             'http://localhost:3001/css/bootstrap.min.css',
             'http://localhost:3001/css/styles1.css',
             
         ]
     }
-}))
-app.use(express.static(path.join(__dirname, 'public')));
+}));
 app.use(mongoSanitize());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -85,7 +97,8 @@ passport.deserializeUser(User.deserializeUser());
 mongoose.connect(dbUrl)
     .then(console.log('Database is live'))
     .catch(err => next(err));
-app.listen(3001, () => {
+const port = (process.env.PORT || 3001);
+app.listen(port, () => {
     console.log('Server Live')
 });
 app.use('/shop/:userId/:category/', shopRouter);

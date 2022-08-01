@@ -2,8 +2,10 @@
     let currentItemId = '<%=currentItem.id%>'
 </script>
 <script nonce="<%=hash%>">
+
     let currentCategory = '<%=currentItem.category.main%>'
 </script>
+<%=hash%>
 <%-layout('./partials/boilerplate.ejs')%>
 
 <%-include('./partials/backBtn')%>

@@ -326,3 +326,7 @@ border-width: 1px;
     max-width: 12rem;
 }
 
+#map{
+    width: 400px; 
+    height: 300px;
+}
