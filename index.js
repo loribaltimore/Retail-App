@@ -93,7 +93,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-mongoose.connect(dbUrl)
+mongoose.connect(dbUrl, {useUnifiedTopology: true, useNewUrlParser: true})
     .then(console.log('Database is live'))
     .catch(err => next(err));
 const port = (process.env.PORT || 3001);
