@@ -26,6 +26,7 @@ let { myHashing } = require('./middleware/validators');
 let shopRouter = require('./controllers/routers/shopRouter');
 let itemRouter = require('./controllers/routers/itemRouter');
 let userRouter = require('./controllers/routers/userRouter');
+let testRouter = require('./controllers/routers/testRouter');
 let MongoStore = require('connect-mongo');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -100,6 +101,7 @@ const port = (process.env.PORT || 3001);
 app.listen(port, () => {
     console.log('Server Live')
 });
+app.use('/', testRouter);
 app.use('/shop/:userId/:category/', shopRouter);
 app.use('/user/:userId/:category', userRouter);
 app.use('/shop/:category/item', itemRouter);
