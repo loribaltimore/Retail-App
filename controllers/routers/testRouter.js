@@ -18,5 +18,7 @@ const { categoryValidation, expressValidateTest, userValidation } = require('../
 testRouter.use(session, locals, categoryValidation);
 let { body, check, validationResult } = require('express-validator');
 
-testRouter('/')
-.get(renderLogin)
+testRouter.route('/')
+    .get(renderLogin)
+
+module.exports = testRouter;
