@@ -5,12 +5,12 @@ let randomHash = () => {
     return crypto.randomBytes(16).toString('hex');
 }
 module.exports.locals = async (req, res, next) => {
-    let currentUser = await User.findById('62cade6087fd406e68edfcb2');
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.info = req.flash('info');
     res.locals.category = undefined;
     if (req.path !== '/') {
+        console.log(req.path);
         res.locals.category = req.originalUrl.split('/')[2].split('');
         res.locals.category[0] = res.locals.category[0].toUpperCase();
         res.locals.category = res.locals.category.join('');
@@ -39,7 +39,9 @@ module.exports.locals = async (req, res, next) => {
             tax: req.session.cart[0].tax
         }
     } else { res.locals.cart = [] };
-    res.locals.allNotifs = currentUser.notifications;
+    if (res.locals.currentUser) {
+        res.locals.allNotifs = currentUser.notifications; 
+    };
     if (process.env.NODE_ENV !== 'production') {
         res.locals.isProduction = false  
     } else { res.locals.isProduction = true };
