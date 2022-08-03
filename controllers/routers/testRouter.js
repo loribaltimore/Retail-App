@@ -15,7 +15,7 @@ let { CustomeError } = require('../../middleware/errHandling');
 let { locals } = require('../../middleware/locals');
 let { session } = require('../../middleware/session');
 const { categoryValidation, expressValidateTest, userValidation } = require('../../middleware/validators');
-testRouter.use(session, locals, categoryValidation);
+testRouter.use(session, locals);
 let { body, check, validationResult } = require('express-validator');
 
 testRouter.route('/')
