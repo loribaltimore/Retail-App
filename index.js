@@ -51,8 +51,8 @@ app.use(helmet.contentSecurityPolicy({
             'self',
             (req, res) => { return `'nonce-${res.locals.hash}'` },
             'https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js',
-            'http://https://portfolio-retail-site.herokuapp.com/js/userScript.js',
-            'http://https://portfolio-retail-site.herokuapp.com/js/bootstrap.min.js',
+            'https://portfolio-retail-site.herokuapp.com/js/userScript.js',
+            'https://portfolio-retail-site.herokuapp.com/js/bootstrap.min.js',
             'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js',
         ],
         'img-src': ['self', 'blob:', 'data:', `https://res.cloudinary.com/demgmfow6/`],
@@ -60,8 +60,8 @@ app.use(helmet.contentSecurityPolicy({
             'self',
             (req, res) => { return `'nonce-${res.locals.hash}'` },
             'https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css',
-            'http://https://portfolio-retail-site.herokuapp.com/css/bootstrap.min.css',
-            'http://https://portfolio-retail-site.herokuapp.com/css/styles1.css',
+            'https://portfolio-retail-site.herokuapp.com/css/bootstrap.min.css',
+            'https://portfolio-retail-site.herokuapp.com/css/styles1.css',
             
         ]
     }
