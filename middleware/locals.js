@@ -20,7 +20,8 @@ module.exports.locals = async (req, res, next) => {
     // };
     res.locals.prevUrl = 5;
     res.locals.currentUrl = req.originalUrl;
-    res.locals.currentUser = currentUser;
+    
+    // res.locals.currentUser = currentUser;
 
     if (req.session.cart !== undefined && req.session.cart.length) {
         let allItems = req.session.cart[0].items.map(function (element, index) {
