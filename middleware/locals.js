@@ -10,7 +10,7 @@ module.exports.locals = async (req, res, next) => {
     res.locals.error = req.flash('error');
     res.locals.info = req.flash('info');
     res.locals.category = undefined;
-    if (req.originalUrl !== '/') {
+    if (req.path !== '/') {
         res.locals.category = req.originalUrl.split('/')[2].split('');
         res.locals.category[0] = res.locals.category[0].toUpperCase();
         res.locals.category = res.locals.category.join('');
